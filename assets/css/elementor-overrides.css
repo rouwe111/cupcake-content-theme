@@ -1,0 +1,159 @@
+/* ==========================================================================
+   CupCake Theme — elementor-overrides.css
+   Aligns Elementor's container widths, paddings, and widget spacing with
+   the CupCake design system tokens. Loaded only when Elementor is active.
+   ========================================================================== */
+
+/* ─── Elementor container widths ─────────────────────────────────────────────── */
+
+/* Elementor uses --e-container-max-width for boxed containers.
+   We default to full-width so widgets can span edge-to-edge. */
+:root {
+    --e-container-max-width: 100%;
+}
+
+/* Classic section structure (pre-flex container layout): full-width by default. */
+.elementor-section.elementor-section-boxed > .elementor-container,
+.elementor-container.elementor-column-gap-default {
+    max-width: 100%;
+}
+
+/* Flexbox container structure (current Elementor): full-width containers. */
+.elementor .e-con,
+.elementor .e-container {
+    max-width: 100%;
+}
+
+/* ─── Full-width sections ────────────────────────────────────────────────────── */
+
+/* Ensure Elementor's full-width sections break out of any wrapper cleanly. */
+.elementor-section.elementor-section-full_width > .elementor-container {
+    max-width: 100%;
+}
+
+/* No extra left/right padding on full-width sections — we manage spacing
+   inside widgets with padding controls. */
+.elementor-section.elementor-section-full_width {
+    padding-inline: 0;
+}
+
+/* ─── Section spacing defaults ───────────────────────────────────────────────── */
+
+/* Give sections breathing room by default. Users can override per section. */
+.elementor-section {
+    padding-block: var(--cc-space-16);
+}
+
+.elementor-section.elementor-section-full_width {
+    padding-block: 0;
+}
+
+/* Prevent a visual gap under the sticky header on the first front-page widget. */
+body.home .elementor-section.elementor-top-section:first-of-type {
+    padding-top: 0;
+    margin-top: 0;
+}
+
+body.home .elementor > .e-con:first-child,
+body.home .elementor > .e-container:first-child {
+    padding-top: 0;
+    margin-top: 0;
+}
+
+/* ─── Column gap alignment ───────────────────────────────────────────────────── */
+
+.elementor-column-gap-default > .elementor-row {
+    --elementor-column-gap: var(--cc-space-8);
+}
+
+.elementor-column-gap-narrow > .elementor-row {
+    --elementor-column-gap: var(--cc-space-4);
+}
+
+.elementor-column-gap-wide > .elementor-row {
+    --elementor-column-gap: var(--cc-space-12);
+}
+
+/* ─── Widget typography overrides ────────────────────────────────────────────── */
+
+/* Elementor's default heading widget — ensure it inherits our font tokens. */
+.elementor-widget-heading .elementor-heading-title {
+    font-family: var(--cc-font-display);
+}
+
+/* Elementor text editor — body copy. */
+.elementor-widget-text-editor .elementor-widget-container {
+    font-family: var(--cc-font-body);
+    color: var(--cc-color-text);
+    line-height: 1.6;
+}
+
+/* ─── Elementor button overrides ─────────────────────────────────────────────── */
+
+/* Map Elementor's default button to match cc-btn--primary when using the
+   default accent in Global Settings. */
+.elementor-button {
+    font-family: var(--cc-font-body);
+    font-weight: 600;
+    letter-spacing: 0;
+    border-radius: var(--cc-radius-md);
+    transition:
+        background-color var(--cc-transition-fast),
+        border-color var(--cc-transition-fast),
+        color var(--cc-transition-fast);
+}
+
+/* ─── Elementor image widget ─────────────────────────────────────────────────── */
+
+.elementor-widget-image img {
+    border-radius: var(--cc-radius-md);
+}
+
+/* ─── Elementor inner sections / containers ──────────────────────────────────── */
+
+/* Keep nested sections full-width as well. */
+.elementor-inner-section > .elementor-container {
+    max-width: 100%;
+}
+
+/* ─── Remove default Elementor widget padding where our components own it ────── */
+
+/* Our cc-hero already handles its own padding. */
+.elementor-widget-cupcake-hero .elementor-widget-container {
+    padding: 0;
+}
+
+.elementor-widget-cupcake-cta-card .elementor-widget-container {
+    padding: 0;
+}
+
+.elementor-widget-cupcake-testimonial .elementor-widget-container {
+    padding: 0;
+}
+
+/* ─── Editor mode: section outline contrast fix ──────────────────────────────── */
+
+/* In the editor, Elementor renders a dashed outline on hover. Ensure it
+   doesn't conflict with our dark surface backgrounds. */
+.elementor-edit-mode .elementor-element:hover > .elementor-element-overlay {
+    outline-color: var(--cc-color-accent);
+}
+
+/* ─── Elementor popup / modal ────────────────────────────────────────────────── */
+
+.elementor-popup-modal .dialog-widget-content {
+    border-radius: var(--cc-radius-lg);
+    box-shadow: var(--cc-shadow-lg);
+}
+
+/* ─── Responsive: Elementor on mobile ───────────────────────────────────────── */
+
+@media (max-width: 767px) {
+    .elementor-section {
+        padding-block: var(--cc-space-12);
+    }
+
+    .elementor-section.elementor-section-full_width {
+        padding-block: 0;
+    }
+}

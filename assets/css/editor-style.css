@@ -1,0 +1,44 @@
+/* Editor styles for Gutenberg content blocks. */
+
+.editor-styles-wrapper .wp-block-quote.is-style-cupcake-highlight,
+.editor-styles-wrapper .wp-block-pullquote.is-style-cupcake-highlight blockquote {
+    margin: 8px 0 26px;
+    padding: 22px 28px;
+    background: #eaf3ec;
+    border-left: 4px solid #4e7d5b;
+    border-radius: 0 18px 18px 0;
+}
+
+.editor-styles-wrapper .wp-block-paragraph.is-style-cupcake-highlight-quote,
+.editor-styles-wrapper .wp-block-paragraph.cupcake-highlight-quote,
+.editor-styles-wrapper p.cupcake-highlight-quote {
+    margin: 8px 0 26px;
+    padding: 22px 28px;
+    background: #eaf3ec;
+    border-left: 4px solid #4e7d5b;
+    border-radius: 0 18px 18px 0;
+    max-width: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.45;
+    color: #2e4d39;
+}
+
+.editor-styles-wrapper .wp-block-quote.is-style-cupcake-highlight p,
+.editor-styles-wrapper .wp-block-pullquote.is-style-cupcake-highlight p {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.45;
+    color: #2e4d39;
+}
+
+.editor-styles-wrapper .wp-block-quote.is-style-cupcake-highlight cite,
+.editor-styles-wrapper .wp-block-pullquote.is-style-cupcake-highlight cite {
+    margin-top: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    color: #3f6a4b;
+}

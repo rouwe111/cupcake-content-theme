@@ -1,0 +1,75 @@
+/*
+Theme Name: Cupcake Content
+Theme URI: https://github.com/rouwe111/cupcake-content-theme
+Author: CupCake Studio
+Description: Elementor theme for Cupcake Content
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 8.0
+License: GPL-2.0-or-later
+Update URI: https://github.com/rouwe111/cupcake-content-theme
+Text Domain: cupcake
+*/
+
+:root {
+    /* ─── Colors ──────────────────────────────────────────────────────────── */
+    --cc-color-primary:       #1A1A2E;
+    --cc-color-secondary:     #16213E;
+    --cc-color-accent:        #E94560;
+    --cc-color-accent-light:  #FF6B6B;
+    --cc-color-surface:       #F8F9FA;
+    --cc-color-surface-alt:   #FFFFFF;
+    --cc-color-text:          #1A1A2E;
+    --cc-color-text-muted:    #6B7280;
+    --cc-color-border:        #E5E7EB;
+
+    /* ─── Typography ──────────────────────────────────────────────────────── */
+    --cc-font-display: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
+    --cc-font-body:    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --cc-font-mono:    'Courier New', monospace;
+
+    /* ─── Fluid Font Sizes ────────────────────────────────────────────────── */
+    --cc-text-xs:   clamp(0.75rem,   0.7rem + 0.25vw,  0.875rem);
+    --cc-text-sm:   clamp(0.875rem,  0.8rem + 0.375vw, 1rem);
+    --cc-text-base: clamp(1rem,      0.9rem + 0.5vw,   1.125rem);
+    --cc-text-lg:   clamp(1.125rem,  1rem + 0.625vw,   1.25rem);
+    --cc-text-xl:   clamp(1.25rem,   1.1rem + 0.75vw,  1.5rem);
+    --cc-text-2xl:  clamp(1.5rem,    1.3rem + 1vw,     2rem);
+    --cc-text-3xl:  clamp(2rem,      1.6rem + 2vw,     3rem);
+    --cc-text-4xl:  clamp(2.5rem,    1.8rem + 3.5vw,   4.5rem);
+
+    /* ─── Spacing ─────────────────────────────────────────────────────────── */
+    --cc-space-1:  0.25rem;
+    --cc-space-2:  0.5rem;
+    --cc-space-3:  0.75rem;
+    --cc-space-4:  1rem;
+    --cc-space-6:  1.5rem;
+    --cc-space-8:  2rem;
+    --cc-space-12: 3rem;
+    --cc-space-16: 4rem;
+    --cc-space-24: 6rem;
+
+    /* ─── Layout ──────────────────────────────────────────────────────────── */
+    --cc-container-sm:  640px;
+    --cc-container-md:  768px;
+    --cc-container-lg:  1024px;
+    --cc-container-xl:  1280px;
+    --cc-container-2xl: 1440px;
+
+    /* ─── Border Radius ───────────────────────────────────────────────────── */
+    --cc-radius-sm:   4px;
+    --cc-radius-md:   8px;
+    --cc-radius-lg:   16px;
+    --cc-radius-full: 9999px;
+
+    /* ─── Shadows ─────────────────────────────────────────────────────────── */
+    --cc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --cc-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.04);
+    --cc-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+
+    /* ─── Transitions ─────────────────────────────────────────────────────── */
+    --cc-transition-fast: 150ms ease;
+    --cc-transition-base: 250ms ease;
+    --cc-transition-slow: 400ms ease;
+}
