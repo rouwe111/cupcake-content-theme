@@ -49,6 +49,13 @@ trait CupCake_Color_Sets {
                 'icon_bg'    => '#F7D8E8',
                 'icon_color' => '#C9417A',
             ],
+            'grey' => [
+                'label'      => __('Grey', 'cupcake'),
+                'card_bg'    => '#F3F4F6',
+                'card_border'=> '#E2E4E9',
+                'icon_bg'    => '#E8EAF0',
+                'icon_color' => '#6B7280',
+            ],
         ];
     }
 

@@ -174,6 +174,7 @@ class CupCake_Elementor_Integration {
         require_once get_template_directory() . '/inc/elementor/widgets/class-widget-quote-highlight.php';
         require_once get_template_directory() . '/inc/elementor/widgets/class-widget-direct-contact.php';
         require_once get_template_directory() . '/inc/elementor/widgets/class-widget-small-content.php';
+        require_once get_template_directory() . '/inc/elementor/widgets/class-widget-packages.php';
 
         $widgets_manager->register(new CupCake_Widget_Hero());
         $widgets_manager->register(new CupCake_Widget_Section_Intro());
@@ -189,6 +190,7 @@ class CupCake_Elementor_Integration {
         $widgets_manager->register(new CupCake_Widget_Quote_Highlight());
         $widgets_manager->register(new CupCake_Widget_Direct_Contact());
         $widgets_manager->register(new CupCake_Widget_Small_Content());
+        $widgets_manager->register(new CupCake_Widget_Packages());
     }
 
     /**
