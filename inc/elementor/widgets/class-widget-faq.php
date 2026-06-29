@@ -125,6 +125,19 @@ class CupCake_Widget_FAQ extends Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'enable_structured_data',
+            [
+                'label'        => __('Output FAQ structured data (SEO)', 'cupcake'),
+                'type'         => Controls_Manager::SWITCHER,
+                'label_on'     => __('Yes', 'cupcake'),
+                'label_off'    => __('No', 'cupcake'),
+                'return_value' => 'yes',
+                'default'      => 'yes',
+                'separator'    => 'before',
+            ]
+        );
+
         $this->end_controls_section();
     }
 
@@ -134,16 +147,19 @@ class CupCake_Widget_FAQ extends Widget_Base {
         $title      = trim((string) ($settings['title'] ?? ''));
         $items      = $settings['items'] ?? [];
         $open_first = 'yes' === ($settings['open_first'] ?? 'yes');
+        $use_structured_data = 'yes' === ($settings['enable_structured_data'] ?? 'yes');
 
         if (! is_array($items) || empty($items)) {
             return;
         }
 
         $widget_id = (string) $this->get_id();
+        $heading_id = 'cc-faq-title-' . $widget_id;
+        $schema_items = [];
         ?>
-        <section class="cc-faq-widget" aria-label="<?php echo esc_attr__('Frequently asked questions', 'cupcake'); ?>">
+        <section class="cc-faq-widget" <?php if ('' !== $title) : ?>aria-labelledby="<?php echo esc_attr($heading_id); ?>"<?php else : ?>aria-label="<?php echo esc_attr__('Frequently asked questions', 'cupcake'); ?>"<?php endif; ?>>
             <?php if ('' !== $title) : ?>
-                <h2 class="cc-faq-widget__title"><?php echo esc_html($title); ?></h2>
+                <h2 id="<?php echo esc_attr($heading_id); ?>" class="cc-faq-widget__title"><?php echo esc_html($title); ?></h2>
             <?php endif; ?>
 
             <div class="cc-faq-widget__list" data-cc-accordion="single">
@@ -154,6 +170,17 @@ class CupCake_Widget_FAQ extends Widget_Base {
 
                     if ('' === $question || '' === $answer) {
                         continue;
+                    }
+
+                    if ($use_structured_data) {
+                        $schema_items[] = [
+                            '@type'          => 'Question',
+                            'name'           => $question,
+                            'acceptedAnswer' => [
+                                '@type' => 'Answer',
+                                'text'  => wp_strip_all_tags($answer),
+                            ],
+                        ];
                     }
 
                     $is_open   = $open_first && 0 === (int) $index;
@@ -187,6 +214,19 @@ class CupCake_Widget_FAQ extends Widget_Base {
                 <?php endforeach; ?>
             </div>
         </section>
+        <?php
+        if ($use_structured_data && ! empty($schema_items)) {
+            $schema = [
+                '@context'   => 'https://schema.org',
+                '@type'      => 'FAQPage',
+                'mainEntity' => $schema_items,
+            ];
+            ?>
+            <script type="application/ld+json"><?php echo wp_json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?></script>
+            <?php
+        }
+
+        ?>
         <?php
     }
 }

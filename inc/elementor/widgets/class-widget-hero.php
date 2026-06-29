@@ -486,6 +486,7 @@ class CupCake_Widget_Hero extends Widget_Base {
         $float_number    = esc_html($settings['floating_number'] ?? '');
         $float_text      = esc_html($settings['floating_text'] ?? '');
         $float_status    = esc_html($settings['floating_status_text'] ?? '');
+        $heading_id      = $this->get_id() . '-heading';
 
         $theme_preset = (string) ($settings['theme_preset'] ?? 'rose');
         $theme_tokens = $this->resolve_theme_tokens($theme_preset);
@@ -568,7 +569,7 @@ class CupCake_Widget_Hero extends Widget_Base {
         }
 
         ?>
-        <section class="cc-hero cc-hero--theme-<?php echo esc_attr($theme_preset); ?>" style="<?php echo esc_attr($hero_style); ?>">
+        <section class="cc-hero cc-hero--theme-<?php echo esc_attr($theme_preset); ?>" style="<?php echo esc_attr($hero_style); ?>" <?php if ($heading_intro || $heading_marked) : ?>aria-labelledby="<?php echo esc_attr($heading_id); ?>"<?php else : ?>aria-label="<?php echo esc_attr__('Hero section', 'cupcake'); ?>"<?php endif; ?>>
             <div class="cc-hero__inner">
                 <div class="cc-hero__content">
                     <?php if ($label_text) : ?>
@@ -576,7 +577,7 @@ class CupCake_Widget_Hero extends Widget_Base {
                     <?php endif; ?>
 
                     <?php if ($heading_intro || $heading_marked) : ?>
-                        <<?php echo esc_attr($heading_tag); ?> class="cc-hero__heading">
+                        <<?php echo esc_attr($heading_tag); ?> id="<?php echo esc_attr($heading_id); ?>" class="cc-hero__heading">
                             <?php echo $heading_intro; ?>
                             <?php if ($heading_marked) : ?>
                                 <span class="cc-hero__heading-marked"><?php echo $heading_marked; ?></span>

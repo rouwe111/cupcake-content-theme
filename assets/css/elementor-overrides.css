@@ -135,6 +135,10 @@ body.home .elementor > .e-container:first-child {
     padding: 0;
 }
 
+.elementor-widget-cupcake-company-logos .elementor-widget-container {
+    padding: 0;
+}
+
 /* ─── Editor mode: section outline contrast fix ──────────────────────────────── */
 
 /* In the editor, Elementor renders a dashed outline on hover. Ensure it

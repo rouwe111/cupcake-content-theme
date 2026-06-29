@@ -185,6 +185,19 @@ class CupCake_Widget_Blogs extends Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'enable_structured_data',
+            [
+                'label'        => __('Output structured data (SEO)', 'cupcake'),
+                'type'         => Controls_Manager::SWITCHER,
+                'label_on'     => __('Yes', 'cupcake'),
+                'label_off'    => __('No', 'cupcake'),
+                'return_value' => 'yes',
+                'default'      => 'yes',
+                'separator'    => 'before',
+            ]
+        );
+
         $this->end_controls_section();
     }
 
@@ -196,6 +209,9 @@ class CupCake_Widget_Blogs extends Widget_Base {
         $title_tag   = strtolower((string) ($settings['title_tag'] ?? 'h2'));
         $title_tag   = in_array($title_tag, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div'], true) ? $title_tag : 'h2';
         $button_text = esc_html($settings['button_text'] ?? '');
+        $heading_id  = $this->get_id() . '-title';
+        $schema_items = [];
+        $use_structured_data = 'yes' === ($settings['enable_structured_data'] ?? 'yes');
 
         $link_type = $settings['button_link_type'] ?? 'external';
         $link_data = [];
@@ -233,7 +249,7 @@ class CupCake_Widget_Blogs extends Widget_Base {
             $this->add_link_attributes('button_url', $link_data);
         }
         ?>
-        <section class="cc-blogs-widget">
+        <section class="cc-blogs-widget" <?php if ('' !== $title) : ?>aria-labelledby="<?php echo esc_attr($heading_id); ?>"<?php else : ?>aria-label="<?php echo esc_attr__('Blog posts', 'cupcake'); ?>"<?php endif; ?>>
             <header class="cc-blogs-widget__header">
                 <div class="cc-blogs-widget__heading-group">
                     <?php if ($subtitle) : ?>
@@ -241,7 +257,7 @@ class CupCake_Widget_Blogs extends Widget_Base {
                     <?php endif; ?>
 
                     <?php if ($title) : ?>
-                        <<?php echo esc_attr($title_tag); ?> class="cc-blogs-widget__title"><?php echo $title; ?></<?php echo esc_attr($title_tag); ?>>
+                        <<?php echo esc_attr($title_tag); ?> id="<?php echo esc_attr($heading_id); ?>" class="cc-blogs-widget__title"><?php echo $title; ?></<?php echo esc_attr($title_tag); ?>>
                     <?php endif; ?>
                 </div>
 
@@ -270,9 +286,20 @@ class CupCake_Widget_Blogs extends Widget_Base {
 
                         $word_count = str_word_count(wp_strip_all_tags((string) get_post_field('post_content', $post_id)));
                         $read_time  = max(1, (int) ceil($word_count / 200));
+
+                        if ($use_structured_data) {
+                            $schema_items[] = [
+                                '@type'         => 'BlogPosting',
+                                'headline'      => $post_title,
+                                'datePublished' => get_post_time('c', true, $post_id),
+                                'url'           => $post_permalink,
+                                'image'         => $thumb_url ? $thumb_url : null,
+                                'articleSection'=> $category_name,
+                            ];
+                        }
                         ?>
                         <article class="cc-blogs-widget__card">
-                            <a class="cc-blogs-widget__media-link" href="<?php echo esc_url($post_permalink); ?>">
+                            <a class="cc-blogs-widget__media-link" href="<?php echo esc_url($post_permalink); ?>" aria-label="<?php echo esc_attr(sprintf(__('Open blog post: %s', 'cupcake'), $post_title)); ?>">
                                 <?php if ($thumb_url) : ?>
                                     <img
                                         src="<?php echo esc_url($thumb_url); ?>"
@@ -288,7 +315,7 @@ class CupCake_Widget_Blogs extends Widget_Base {
                             <div class="cc-blogs-widget__body">
                                 <span class="cc-blogs-widget__tag"><?php echo esc_html($category_name); ?></span>
                                 <h3 class="cc-blogs-widget__card-title">
-                                    <a href="<?php echo esc_url($post_permalink); ?>"><?php echo esc_html($post_title); ?></a>
+                                    <a href="<?php echo esc_url($post_permalink); ?>" aria-label="<?php echo esc_attr(sprintf(__('Read blog post: %s', 'cupcake'), $post_title)); ?>"><?php echo esc_html($post_title); ?></a>
                                 </h3>
                                 <p class="cc-blogs-widget__meta">
                                     <?php echo esc_html($post_date . ' · ' . $read_time . ' min'); ?>
@@ -302,6 +329,18 @@ class CupCake_Widget_Blogs extends Widget_Base {
             <?php endif; ?>
         </section>
         <?php
+        if ($use_structured_data && ! empty($schema_items)) {
+            $schema = [
+                '@context'         => 'https://schema.org',
+                '@type'            => 'Blog',
+                'name'             => '' !== $title ? $title : __('Blog posts', 'cupcake'),
+                'blogPost'         => $schema_items,
+            ];
+            ?>
+            <script type="application/ld+json"><?php echo wp_json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?></script>
+            <?php
+        }
+
         wp_reset_postdata();
     }
 }

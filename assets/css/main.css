@@ -606,6 +606,123 @@ small     { font-size: var(--cc-text-sm); }
 
 /* ─── Packages widget ─────────────────────────────────────────────────────── */
 
+.cc-company-logos-widget__header {
+    margin-bottom: 28px;
+}
+
+.cc-company-logos-widget__title {
+    margin: 0;
+    font-family: 'Poppins', var(--cc-font-body);
+    font-weight: 700;
+    font-size: clamp(30px, 3.6vw, 44px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: #211f1e;
+}
+
+.cc-company-logos-widget__subtitle {
+    margin: 14px 0 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #6b635f;
+    max-width: none;
+}
+
+.cc-company-logos-widget__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(14px, 2vw, 20px);
+}
+
+.cc-company-logos-widget__card {
+    background: #fff;
+    border: 1px solid #efe6dd;
+    border-radius: 18px;
+    min-height: 172px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 20px 40px -36px rgba(33, 31, 30, 0.45);
+}
+
+.cc-company-logos-widget__card--link {
+    text-decoration: none;
+    transition: transform var(--cc-transition-fast), box-shadow var(--cc-transition-fast), border-color var(--cc-transition-fast);
+}
+
+.cc-company-logos-widget__card--link:hover,
+.cc-company-logos-widget__card--link:focus-visible {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--cc-primary, #fa4d56) 35%, #efe6dd);
+    box-shadow: 0 26px 42px -34px rgba(33, 31, 30, 0.48);
+    outline: none;
+}
+
+.cc-company-logos-widget__image {
+    width: 100%;
+    max-width: 188px;
+    max-height: 72px;
+    object-fit: contain;
+    object-position: center;
+}
+
+.cc-company-logos-widget__placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 72px;
+    width: 100%;
+    max-width: 188px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #f8f4ee;
+    color: #6b635f;
+    font-family: 'Poppins', var(--cc-font-body);
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.25;
+    text-align: center;
+}
+
+.cc-company-logos-widget__name {
+    display: block;
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    font-family: 'Poppins', var(--cc-font-body);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.35;
+    color: #211f1e;
+}
+
+@media (max-width: 1024px) {
+    .cc-company-logos-widget__grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767px) {
+    .cc-company-logos-widget__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .cc-company-logos-widget__card {
+        min-height: 148px;
+        padding: 14px;
+        border-radius: 16px;
+    }
+
+    .cc-company-logos-widget__image,
+    .cc-company-logos-widget__placeholder {
+        max-height: 60px;
+    }
+}
+
 .cc-packages-widget__header {
     margin-bottom: 30px;
 }

@@ -346,6 +346,19 @@ class CupCake_Widget_Packages extends Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'enable_structured_data',
+            [
+                'label'        => __('Output structured data (SEO)', 'cupcake'),
+                'type'         => Controls_Manager::SWITCHER,
+                'label_on'     => __('Yes', 'cupcake'),
+                'label_off'    => __('No', 'cupcake'),
+                'return_value' => 'yes',
+                'default'      => 'yes',
+                'separator'    => 'before',
+            ]
+        );
+
         $this->end_controls_section();
     }
 
@@ -356,16 +369,19 @@ class CupCake_Widget_Packages extends Widget_Base {
         $section_title    = trim((string) ($settings['section_title'] ?? ''));
         $section_subtitle = trim((string) ($settings['section_subtitle'] ?? ''));
         $packages         = $settings['packages'] ?? [];
+        $heading_id       = $this->get_id() . '-title';
+        $schema_items     = [];
+        $use_structured_data = 'yes' === ($settings['enable_structured_data'] ?? 'yes');
 
         if (! is_array($packages) || empty($packages)) {
             return;
         }
         ?>
-        <section class="cc-packages-widget" aria-label="<?php echo esc_attr__('Packages', 'cupcake'); ?>">
+        <section class="cc-packages-widget" <?php if ('' !== $section_title) : ?>aria-labelledby="<?php echo esc_attr($heading_id); ?>"<?php else : ?>aria-label="<?php echo esc_attr__('Packages', 'cupcake'); ?>"<?php endif; ?>>
             <?php if ('' !== $section_title || '' !== $section_subtitle) : ?>
                 <header class="cc-packages-widget__header">
                     <?php if ('' !== $section_title) : ?>
-                        <h2 class="cc-packages-widget__title"><?php echo esc_html($section_title); ?></h2>
+                        <h2 id="<?php echo esc_attr($heading_id); ?>" class="cc-packages-widget__title"><?php echo esc_html($section_title); ?></h2>
                     <?php endif; ?>
 
                     <?php if ('' !== $section_subtitle) : ?>
@@ -374,7 +390,7 @@ class CupCake_Widget_Packages extends Widget_Base {
                 </header>
             <?php endif; ?>
 
-            <div class="cc-packages-widget__grid">
+            <div class="cc-packages-widget__grid" role="list">
                 <?php foreach ($packages as $index => $package) : ?>
                     <?php
                     $eyebrow        = trim((string) ($package['package_eyebrow'] ?? ''));
@@ -438,11 +454,36 @@ class CupCake_Widget_Packages extends Widget_Base {
                     $has_link = '' !== ($link_data['url'] ?? '');
                     $link_key = sprintf('package_button_%d', (int) $index);
 
+                    if ($use_structured_data) {
+                        $schema_item = [
+                            '@type'       => 'Offer',
+                            'name'        => $title,
+                            'description' => $subtitle,
+                            'category'    => $eyebrow,
+                        ];
+
+                        if ($has_link) {
+                            $schema_item['url'] = (string) $link_data['url'];
+                        }
+
+                        $schema_items[] = $schema_item;
+                    }
+
                     if ($has_link) {
+                        $this->add_render_attribute(
+                            $link_key,
+                            'aria-label',
+                            sprintf(
+                                /* translators: %s: package title */
+                                __('Open package: %s', 'cupcake'),
+                                $title
+                            )
+                        );
+
                         $this->add_link_attributes($link_key, $link_data);
                     }
                     ?>
-                    <article class="cc-package-card<?php echo $is_popular ? ' is-popular' : ''; ?>" style="<?php echo esc_attr($card_style); ?>">
+                    <article class="cc-package-card<?php echo $is_popular ? ' is-popular' : ''; ?>" style="<?php echo esc_attr($card_style); ?>" role="listitem">
                         <?php if ($is_popular && '' !== $popular_label) : ?>
                             <p class="cc-package-card__popular"><?php echo esc_html($popular_label); ?></p>
                         <?php endif; ?>
@@ -495,5 +536,17 @@ class CupCake_Widget_Packages extends Widget_Base {
             </div>
         </section>
         <?php
+        if ($use_structured_data && ! empty($schema_items)) {
+            $schema = [
+                '@context'        => 'https://schema.org',
+                '@type'           => 'OfferCatalog',
+                'name'            => '' !== $section_title ? $section_title : __('Packages', 'cupcake'),
+                'itemListElement' => $schema_items,
+            ];
+            ?>
+            <script type="application/ld+json"><?php echo wp_json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?></script>
+            <?php
+        }
+
     }
 }

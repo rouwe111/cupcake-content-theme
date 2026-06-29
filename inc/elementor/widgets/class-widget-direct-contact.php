@@ -170,6 +170,16 @@ class CupCake_Widget_Direct_Contact extends Widget_Base {
             ]
         );
 
+        $social_repeater->add_control(
+            'social_label',
+            [
+                'label'       => __('Accessible label', 'cupcake'),
+                'type'        => Controls_Manager::TEXT,
+                'default'     => __('Social profile', 'cupcake'),
+                'placeholder' => __('e.g. Instagram profile', 'cupcake'),
+            ]
+        );
+
         $this->add_control(
             'social_items',
             [
@@ -284,6 +294,7 @@ class CupCake_Widget_Direct_Contact extends Widget_Base {
         $title        = trim((string) ($settings['title'] ?? ''));
         $items        = $settings['items'] ?? [];
         $social_items = $settings['social_items'] ?? [];
+        $heading_id   = $this->get_id() . '-title';
 
         $resolved_colors = $this->resolve_color_set(
             (string) ($settings['color_set'] ?? 'sage'),
@@ -304,9 +315,9 @@ class CupCake_Widget_Direct_Contact extends Widget_Base {
             esc_attr($resolved_colors['icon_color'])
         );
         ?>
-        <section class="cc-direct-contact" style="<?php echo esc_attr($style); ?>">
+        <section class="cc-direct-contact" style="<?php echo esc_attr($style); ?>" <?php if ('' !== $title) : ?>aria-labelledby="<?php echo esc_attr($heading_id); ?>"<?php else : ?>aria-label="<?php echo esc_attr__('Direct contact', 'cupcake'); ?>"<?php endif; ?>>
             <?php if ('' !== $title) : ?>
-                <h3 class="cc-direct-contact__title"><?php echo esc_html($title); ?></h3>
+                <h3 id="<?php echo esc_attr($heading_id); ?>" class="cc-direct-contact__title"><?php echo esc_html($title); ?></h3>
             <?php endif; ?>
 
             <?php if (is_array($items) && ! empty($items)) : ?>
@@ -352,11 +363,17 @@ class CupCake_Widget_Direct_Contact extends Widget_Base {
                         }
 
                         $item_key = 'direct_contact_social_' . (string) $index;
+                        $label    = trim((string) ($item['social_label'] ?? ''));
+                        if ('' === $label) {
+                            $label = __('Social profile', 'cupcake');
+                        }
+
+                        $this->add_render_attribute($item_key, 'aria-label', $label);
                         $this->add_link_attributes($item_key, $item['social_link']);
                         ?>
                         <a class="cc-direct-contact__social-link" <?php echo $this->get_render_attribute_string($item_key); ?>>
                             <?php Icons_Manager::render_icon($item['social_icon'] ?? [], ['aria-hidden' => 'true']); ?>
-                            <span class="screen-reader-text"><?php echo esc_html__('Social profile', 'cupcake'); ?></span>
+                            <span class="screen-reader-text"><?php echo esc_html($label); ?></span>
                         </a>
                     <?php endforeach; ?>
                 </div>

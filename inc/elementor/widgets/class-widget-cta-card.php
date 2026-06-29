@@ -260,6 +260,7 @@ class CupCake_Widget_CTA_Card extends Widget_Base {
 
         $heading   = esc_html($settings['heading'] ?? '');
         $body_text = wp_kses_post($settings['body_text'] ?? '');
+        $heading_id = $this->get_id() . '-heading';
 
         $cta_label = esc_html($settings['cta_label'] ?? '');
 
@@ -287,6 +288,7 @@ class CupCake_Widget_CTA_Card extends Widget_Base {
         $has_link = ! empty($link_data['url']);
 
         if ($has_link) {
+            $this->add_render_attribute('cta_link', 'aria-label', __('Open call to action', 'cupcake'));
             $this->add_link_attributes('cta_link', $link_data);
         }
 
@@ -297,7 +299,7 @@ class CupCake_Widget_CTA_Card extends Widget_Base {
             $padding
         );
         ?>
-        <div class="cc-card" style="<?php echo esc_attr($card_style); ?>">
+        <div class="cc-card" style="<?php echo esc_attr($card_style); ?>" <?php if ($heading) : ?>aria-labelledby="<?php echo esc_attr($heading_id); ?>"<?php else : ?>aria-label="<?php echo esc_attr__('Call to action card', 'cupcake'); ?>"<?php endif; ?>>
             <?php if (! empty($settings['selected_icon']['value'])) : ?>
                 <div class="cc-card__icon" style="color:<?php echo $icon_color; ?>;" aria-hidden="true">
                     <?php Icons_Manager::render_icon($settings['selected_icon'], ['aria-hidden' => 'true']); ?>
@@ -305,7 +307,7 @@ class CupCake_Widget_CTA_Card extends Widget_Base {
             <?php endif; ?>
 
             <?php if ($heading) : ?>
-                <h3 class="cc-card__heading"><?php echo $heading; ?></h3>
+                <h3 id="<?php echo esc_attr($heading_id); ?>" class="cc-card__heading"><?php echo $heading; ?></h3>
             <?php endif; ?>
 
             <?php if ($body_text) : ?>

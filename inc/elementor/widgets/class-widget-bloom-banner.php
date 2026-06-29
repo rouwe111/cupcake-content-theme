@@ -232,6 +232,7 @@ class CupCake_Widget_Bloom_Banner extends Widget_Base {
         $heading     = esc_html($settings['heading'] ?? '');
         $description = wp_kses_post($settings['description'] ?? '');
         $button_text = esc_html($settings['button_text'] ?? '');
+        $heading_id  = $this->get_id() . '-heading';
 
         $link_type = $settings['button_link_type'] ?? 'external';
         $link_data = [];
@@ -267,16 +268,17 @@ class CupCake_Widget_Bloom_Banner extends Widget_Base {
         $has_button_link = ! empty($link_data['url']);
 
         if ($has_button_link) {
+            $this->add_render_attribute('button_url', 'aria-label', __('Open call to action', 'cupcake'));
             $this->add_link_attributes('button_url', $link_data);
         }
         ?>
-        <section class="cc-bloom-banner" style="<?php echo esc_attr($style); ?>">
+        <section class="cc-bloom-banner" style="<?php echo esc_attr($style); ?>" <?php if ($heading) : ?>aria-labelledby="<?php echo esc_attr($heading_id); ?>"<?php else : ?>aria-label="<?php echo esc_attr__('Call to action', 'cupcake'); ?>"<?php endif; ?>>
             <span class="cc-bloom-banner__shape cc-bloom-banner__shape--top" aria-hidden="true"></span>
             <span class="cc-bloom-banner__shape cc-bloom-banner__shape--bottom" aria-hidden="true"></span>
 
             <div class="cc-bloom-banner__inner">
                 <?php if ($heading) : ?>
-                    <h2 class="cc-bloom-banner__heading"><?php echo $heading; ?></h2>
+                    <h2 id="<?php echo esc_attr($heading_id); ?>" class="cc-bloom-banner__heading"><?php echo $heading; ?></h2>
                 <?php endif; ?>
 
                 <?php if ($description) : ?>
