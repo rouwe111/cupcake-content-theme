@@ -24,6 +24,7 @@ class CupCake_Elementor_Integration {
         add_action('elementor/widgets/register',               [$this, 'register_widgets']);
         add_action('elementor/elements/categories_registered', [$this, 'add_widget_categories']);
         add_action('elementor/frontend/after_enqueue_styles',  [$this, 'enqueue_widget_styles']);
+        add_action('elementor/preview/enqueue_scripts',        [$this, 'enqueue_preview_scripts']);
         add_action('elementor/theme/register_locations',       [$this, 'register_theme_locations']);
     }
 
@@ -44,15 +45,21 @@ class CupCake_Elementor_Integration {
      * Runs once — skips if a flag is already set.
      */
     public function maybe_seed_kit_defaults(): void {
-        if (get_option('cupcake_kit_seeded')) {
-            return;
-        }
-
         $kit_id = (int) get_option('elementor_active_kit');
 
         if (! $kit_id) {
             return;
         }
+
+        $get_theme_color = static function (string $mod, string $fallback): string {
+            if (function_exists('cupcake_get_color_mod')) {
+                return cupcake_get_color_mod($mod, $fallback);
+            }
+
+            $value = sanitize_hex_color((string) get_theme_mod($mod, $fallback));
+
+            return $value ?: $fallback;
+        };
 
         // ─── Global colours ───────────────────────────────────────────────────
         $global_colors = [
@@ -75,6 +82,56 @@ class CupCake_Elementor_Integration {
                 'id'    => 'cupcake-accent-light',
                 'title' => 'CupCake Accent Light',
                 'color' => '#FF6B6B',
+            ],
+            [
+                'id'    => 'cupcake-rose-light',
+                'title' => 'CC Rose Light',
+                'color' => $get_theme_color('cupcake_set_rose_bg', '#FFF3F1'),
+            ],
+            [
+                'id'    => 'cupcake-rose-dark',
+                'title' => 'CC Rose Dark',
+                'color' => $get_theme_color('cupcake_set_rose_icon', '#FA4D56'),
+            ],
+            [
+                'id'    => 'cupcake-sage-light',
+                'title' => 'CC Sage Light',
+                'color' => $get_theme_color('cupcake_set_sage_bg', '#EAF3EC'),
+            ],
+            [
+                'id'    => 'cupcake-sage-dark',
+                'title' => 'CC Sage Dark',
+                'color' => $get_theme_color('cupcake_set_sage_icon', '#4E7D5B'),
+            ],
+            [
+                'id'    => 'cupcake-sand-light',
+                'title' => 'CC Sand Light',
+                'color' => $get_theme_color('cupcake_set_sand_bg', '#FFF1DC'),
+            ],
+            [
+                'id'    => 'cupcake-sand-dark',
+                'title' => 'CC Sand Dark',
+                'color' => $get_theme_color('cupcake_set_sand_icon', '#D98A2B'),
+            ],
+            [
+                'id'    => 'cupcake-berry-light',
+                'title' => 'CC Berry Light',
+                'color' => $get_theme_color('cupcake_set_berry_bg', '#FBE8EF'),
+            ],
+            [
+                'id'    => 'cupcake-berry-dark',
+                'title' => 'CC Berry Dark',
+                'color' => $get_theme_color('cupcake_set_berry_icon', '#C9417A'),
+            ],
+            [
+                'id'    => 'cupcake-grey-light',
+                'title' => 'CC Grey Light',
+                'color' => $get_theme_color('cupcake_set_grey_bg', '#F3F4F6'),
+            ],
+            [
+                'id'    => 'cupcake-grey-dark',
+                'title' => 'CC Grey Dark',
+                'color' => $get_theme_color('cupcake_set_grey_icon', '#6B7280'),
             ],
             [
                 'id'    => 'cupcake-surface',
@@ -110,13 +167,25 @@ class CupCake_Elementor_Integration {
 
         $existing_colors = $kit_meta['system_colors'] ?? [];
         $existing_fonts  = $kit_meta['system_typography'] ?? [];
+        $did_change      = false;
 
-        // Only add tokens that don't already exist (identified by 'id' field).
+        // Add tokens when missing and sync color values when they exist.
         foreach ($global_colors as $color) {
             $exists = false;
-            foreach ($existing_colors as $ec) {
+            foreach ($existing_colors as $index => $ec) {
                 if (($ec['_id'] ?? '') === $color['id']) {
                     $exists = true;
+
+                    if (($ec['title'] ?? '') !== $color['title']) {
+                        $existing_colors[$index]['title'] = $color['title'];
+                        $did_change = true;
+                    }
+
+                    if (($ec['color'] ?? '') !== $color['color']) {
+                        $existing_colors[$index]['color'] = $color['color'];
+                        $did_change = true;
+                    }
+
                     break;
                 }
             }
@@ -126,6 +195,7 @@ class CupCake_Elementor_Integration {
                     'title' => $color['title'],
                     'color' => $color['color'],
                 ];
+                $did_change = true;
             }
         }
 
@@ -144,11 +214,16 @@ class CupCake_Elementor_Integration {
                     'font_family' => $font['font_family'],
                     'font_weight' => $font['font_weight'],
                 ];
+                $did_change = true;
             }
         }
 
-        $kit_meta['system_colors']     = $existing_colors;
-        $kit_meta['system_typography'] = $existing_fonts;
+        if (! $did_change) {
+            return;
+        }
+
+        $kit_meta['system_colors']     = array_values($existing_colors);
+        $kit_meta['system_typography'] = array_values($existing_fonts);
 
         update_post_meta($kit_id, '_elementor_page_settings', $kit_meta);
         update_option('cupcake_kit_seeded', true);
@@ -227,5 +302,26 @@ class CupCake_Elementor_Integration {
      */
     public function enqueue_widget_styles(): void {
         // Intentionally left empty — styles handled via cupcake-elementor handle.
+    }
+
+    /**
+     * Ensure frontend runtime scripts are available in Elementor preview iframe.
+     */
+    public function enqueue_preview_scripts(): void {
+        $theme   = wp_get_theme();
+        $version = $theme->get('Version') ?: '1.0.0';
+
+        if (wp_script_is('cupcake-main', 'registered')) {
+            wp_enqueue_script('cupcake-main');
+            return;
+        }
+
+        wp_enqueue_script(
+            'cupcake-main-preview',
+            get_template_directory_uri() . '/assets/js/main.js',
+            [],
+            $version,
+            true
+        );
     }
 }

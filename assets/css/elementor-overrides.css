@@ -24,6 +24,103 @@
     max-width: 100%;
 }
 
+/* Default spacing for newly added Elementor containers.
+   This gives standard containers sensible horizontal and vertical rhythm
+   without requiring manual padding every time. */
+.elementor .e-con {
+    padding: 96px 0 96px 0;
+}
+
+/* Elementor may apply padding on inner wrappers as well.
+   Keep spacing single-source on the outer container. */
+.elementor .e-con > .e-con-inner {
+    padding: 0;
+}
+
+/* Keep explicitly full-width containers edge-to-edge. */
+.elementor .e-con.e-con-full {
+    padding-inline: 0;
+}
+
+/* Optional container background helpers.
+   Use these in Elementor > Advanced > CSS Classes on a container. */
+.elementor .e-con.cc-bg-rose {
+    background-color: var(--cc-set-rose-bg, #fff3f1);
+    --cc-container-accent: var(--cc-set-rose-icon, #fa4d56);
+}
+
+.elementor .e-con.cc-bg-sage {
+    background-color: var(--cc-set-sage-bg, #eaf3ec);
+    --cc-container-accent: var(--cc-set-sage-icon, #4e7d5b);
+}
+
+.elementor .e-con.cc-bg-sand {
+    background-color: var(--cc-set-sand-bg, #fff1dc);
+    --cc-container-accent: var(--cc-set-sand-icon, #d98a2b);
+}
+
+.elementor .e-con.cc-bg-berry {
+    background-color: var(--cc-set-berry-bg, #fbe8ef);
+    --cc-container-accent: var(--cc-set-berry-icon, #c9417a);
+}
+
+.elementor .e-con.cc-bg-grey {
+    background-color: var(--cc-set-grey-bg, #f3f4f6);
+    --cc-container-accent: var(--cc-set-grey-icon, #6b7280);
+}
+
+/* Context accent color based on selected Elementor Global Color background.
+   This enables labels like "INSPIRATIE" to follow the matching dark tone. */
+.elementor .e-con[style*='--e-global-color-cupcake-rose-light'],
+.elementor .e-con[style*='--e-global-color-cupcake-rose-dark'] {
+    --cc-context-accent: var(--cc-set-rose-icon, #fa4d56);
+}
+
+.elementor [style*='var(--e-global-color-cupcake-rose-light)'],
+.elementor [style*='var(--e-global-color-cupcake-rose-dark)'] {
+    --cc-context-accent: var(--cc-set-rose-icon, #fa4d56);
+}
+
+.elementor .e-con[style*='--e-global-color-cupcake-sage-light'],
+.elementor .e-con[style*='--e-global-color-cupcake-sage-dark'] {
+    --cc-context-accent: var(--cc-set-sage-icon, #4e7d5b);
+}
+
+.elementor [style*='var(--e-global-color-cupcake-sage-light)'],
+.elementor [style*='var(--e-global-color-cupcake-sage-dark)'] {
+    --cc-context-accent: var(--cc-set-sage-icon, #4e7d5b);
+}
+
+.elementor .e-con[style*='--e-global-color-cupcake-sand-light'],
+.elementor .e-con[style*='--e-global-color-cupcake-sand-dark'] {
+    --cc-context-accent: var(--cc-set-sand-icon, #d98a2b);
+}
+
+.elementor [style*='var(--e-global-color-cupcake-sand-light)'],
+.elementor [style*='var(--e-global-color-cupcake-sand-dark)'] {
+    --cc-context-accent: var(--cc-set-sand-icon, #d98a2b);
+}
+
+.elementor .e-con[style*='--e-global-color-cupcake-berry-light'],
+.elementor .e-con[style*='--e-global-color-cupcake-berry-dark'] {
+    --cc-context-accent: var(--cc-set-berry-icon, #c9417a);
+}
+
+.elementor [style*='var(--e-global-color-cupcake-berry-light)'],
+.elementor [style*='var(--e-global-color-cupcake-berry-dark)'] {
+    --cc-context-accent: var(--cc-set-berry-icon, #c9417a);
+}
+
+.elementor .e-con[style*='--e-global-color-cupcake-grey-light'],
+.elementor .e-con[style*='--e-global-color-cupcake-grey-dark'] {
+    --cc-context-accent: var(--cc-set-grey-icon, #6b7280);
+}
+
+.elementor [style*='var(--e-global-color-cupcake-grey-light)'],
+.elementor [style*='var(--e-global-color-cupcake-grey-dark)'] {
+    --cc-context-accent: var(--cc-set-grey-icon, #6b7280);
+}
+
 /* ─── Full-width sections ────────────────────────────────────────────────────── */
 
 /* Ensure Elementor's full-width sections break out of any wrapper cleanly. */
@@ -154,6 +251,12 @@ body.home .elementor > .e-container:first-child {
     box-shadow: var(--cc-shadow-lg);
 }
 
+@media (max-width: 1024px) {
+    .elementor .e-con {
+        padding: 50px 15px 50px 15px;
+    }
+}
+
 /* ─── Responsive: Elementor on mobile ───────────────────────────────────────── */
 
 @media (max-width: 767px) {
@@ -163,5 +266,9 @@ body.home .elementor > .e-container:first-child {
 
     .elementor-section.elementor-section-full_width {
         padding-block: 0;
+    }
+
+    .elementor .e-con {
+        padding: 50px 15px 50px 15px;
     }
 }

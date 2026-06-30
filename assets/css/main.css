@@ -479,7 +479,7 @@ small     { font-size: var(--cc-text-sm); }
     font-size: 13px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--cc-section-intro-eyebrow-color, #fa4d56);
+    color: var(--cc-context-accent, var(--cc-section-intro-eyebrow-color, #fa4d56));
 }
 
 .cc-section-intro__title {
@@ -1393,7 +1393,7 @@ small     { font-size: var(--cc-text-sm); }
     font-size: 13px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #fa4d56;
+    color: var(--cc-context-accent, #fa4d56);
 }
 
 .cc-blogs-widget__title {
@@ -2484,7 +2484,7 @@ p.cupcake-highlight-quote {
     font-size: 13px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #fa4d56;
+    color: var(--cc-context-accent, #fa4d56);
 }
 
 .cc-blog-archive__title {

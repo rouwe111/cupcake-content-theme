@@ -15,6 +15,23 @@ defined('ABSPATH') || exit;
 trait CupCake_Color_Sets {
 
     /**
+     * Resolve a theme mod color with fallback.
+     *
+     * @param string $key      Theme mod key.
+     * @param string $fallback Default color.
+     * @return string
+     */
+    private function get_theme_color(string $key, string $fallback): string {
+        if (function_exists('cupcake_get_color_mod')) {
+            return cupcake_get_color_mod($key, $fallback);
+        }
+
+        $value = sanitize_hex_color((string) get_theme_mod($key, $fallback));
+
+        return $value ?: $fallback;
+    }
+
+    /**
      * Get all available color sets.
      *
      * @return array<string, array<string, string>>
@@ -23,38 +40,38 @@ trait CupCake_Color_Sets {
         return [
             'rose' => [
                 'label'      => __('Rose', 'cupcake'),
-                'card_bg'    => '#FFE9E7',
+                'card_bg'    => $this->get_theme_color('cupcake_set_rose_bg', '#FFF3F1'),
                 'card_border'=> '#F4D6D3',
                 'icon_bg'    => '#FFDAD6',
-                'icon_color' => '#FA4D56',
+                'icon_color' => $this->get_theme_color('cupcake_set_rose_icon', '#FA4D56'),
             ],
             'sage' => [
                 'label'      => __('Sage', 'cupcake'),
-                'card_bg'    => '#EAF3EC',
+                'card_bg'    => $this->get_theme_color('cupcake_set_sage_bg', '#EAF3EC'),
                 'card_border'=> '#D8E9DD',
                 'icon_bg'    => '#DDEEE3',
-                'icon_color' => '#4E7D5B',
+                'icon_color' => $this->get_theme_color('cupcake_set_sage_icon', '#4E7D5B'),
             ],
             'sand' => [
                 'label'      => __('Sand', 'cupcake'),
-                'card_bg'    => '#FFF1DC',
+                'card_bg'    => $this->get_theme_color('cupcake_set_sand_bg', '#FFF1DC'),
                 'card_border'=> '#F2E0C3',
                 'icon_bg'    => '#FDE9C8',
-                'icon_color' => '#D98A2B',
+                'icon_color' => $this->get_theme_color('cupcake_set_sand_icon', '#D98A2B'),
             ],
             'berry' => [
                 'label'      => __('Berry', 'cupcake'),
-                'card_bg'    => '#FBE8EF',
+                'card_bg'    => $this->get_theme_color('cupcake_set_berry_bg', '#FBE8EF'),
                 'card_border'=> '#F2D5E2',
                 'icon_bg'    => '#F7D8E8',
-                'icon_color' => '#C9417A',
+                'icon_color' => $this->get_theme_color('cupcake_set_berry_icon', '#C9417A'),
             ],
             'grey' => [
                 'label'      => __('Grey', 'cupcake'),
-                'card_bg'    => '#F3F4F6',
+                'card_bg'    => $this->get_theme_color('cupcake_set_grey_bg', '#F3F4F6'),
                 'card_border'=> '#E2E4E9',
                 'icon_bg'    => '#E8EAF0',
-                'icon_color' => '#6B7280',
+                'icon_color' => $this->get_theme_color('cupcake_set_grey_icon', '#6B7280'),
             ],
         ];
     }

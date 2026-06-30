@@ -165,7 +165,7 @@ class CupCake_Widget_Section_Intro extends Widget_Base {
             [
                 'label'   => __('Subtitle color', 'cupcake'),
                 'type'    => Controls_Manager::COLOR,
-                'default' => '#FA4D56',
+                'default' => '',
             ]
         );
 
@@ -203,17 +203,20 @@ class CupCake_Widget_Section_Intro extends Widget_Base {
         $align = in_array($settings['align'] ?? 'center', ['left', 'center'], true) ? $settings['align'] : 'center';
         $max_width = (int) ($settings['max_width']['size'] ?? 640);
 
-        $eyebrow_color     = esc_attr($settings['eyebrow_color'] ?? '#FA4D56');
+        $eyebrow_color     = sanitize_hex_color((string) ($settings['eyebrow_color'] ?? ''));
         $title_color       = esc_attr($settings['title_color'] ?? '#211F1E');
         $description_color = esc_attr($settings['description_color'] ?? '#6B635F');
 
         $wrapper_style = sprintf(
-            '--cc-section-intro-max-width:%dpx;--cc-section-intro-eyebrow-color:%s;--cc-section-intro-title-color:%s;--cc-section-intro-description-color:%s;',
+            '--cc-section-intro-max-width:%dpx;--cc-section-intro-title-color:%s;--cc-section-intro-description-color:%s;',
             $max_width,
-            $eyebrow_color,
             $title_color,
             $description_color
         );
+
+        if ($eyebrow_color) {
+            $wrapper_style .= '--cc-section-intro-eyebrow-color:' . esc_attr($eyebrow_color) . ';';
+        }
         ?>
         <div class="cc-section-intro cc-section-intro--<?php echo esc_attr($align); ?>" style="<?php echo esc_attr($wrapper_style); ?>">
             <?php if ($eyebrow) : ?>

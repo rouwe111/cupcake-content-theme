@@ -155,6 +155,46 @@ function cupcake_customizer_register(WP_Customize_Manager $wp_customize): void {
             'default' => '#F8F9FA',
             'label'   => __('Footer text color', 'cupcake'),
         ],
+        'cupcake_set_rose_bg' => [
+            'default' => '#FFF3F1',
+            'label'   => __('Rose background', 'cupcake'),
+        ],
+        'cupcake_set_rose_icon' => [
+            'default' => '#FA4D56',
+            'label'   => __('Rose icon/accent', 'cupcake'),
+        ],
+        'cupcake_set_sage_bg' => [
+            'default' => '#EAF3EC',
+            'label'   => __('Sage background', 'cupcake'),
+        ],
+        'cupcake_set_sage_icon' => [
+            'default' => '#4E7D5B',
+            'label'   => __('Sage icon/accent', 'cupcake'),
+        ],
+        'cupcake_set_sand_bg' => [
+            'default' => '#FFF1DC',
+            'label'   => __('Sand background', 'cupcake'),
+        ],
+        'cupcake_set_sand_icon' => [
+            'default' => '#D98A2B',
+            'label'   => __('Sand icon/accent', 'cupcake'),
+        ],
+        'cupcake_set_berry_bg' => [
+            'default' => '#FBE8EF',
+            'label'   => __('Berry background', 'cupcake'),
+        ],
+        'cupcake_set_berry_icon' => [
+            'default' => '#C9417A',
+            'label'   => __('Berry icon/accent', 'cupcake'),
+        ],
+        'cupcake_set_grey_bg' => [
+            'default' => '#F3F4F6',
+            'label'   => __('Grey background', 'cupcake'),
+        ],
+        'cupcake_set_grey_icon' => [
+            'default' => '#6B7280',
+            'label'   => __('Grey icon/accent', 'cupcake'),
+        ],
     ];
 
     foreach ($color_controls as $setting_key => $control) {
@@ -387,6 +427,17 @@ function cupcake_customizer_css(): void {
     $footer_bg = cupcake_get_color_mod('cupcake_footer_bg_color', '#2A2320');
     $footer_tx = cupcake_get_color_mod('cupcake_footer_text_color', '#F8F9FA');
 
+    $set_rose_bg   = cupcake_get_color_mod('cupcake_set_rose_bg', '#FFF3F1');
+    $set_rose_icon = cupcake_get_color_mod('cupcake_set_rose_icon', '#FA4D56');
+    $set_sage_bg   = cupcake_get_color_mod('cupcake_set_sage_bg', '#EAF3EC');
+    $set_sage_icon = cupcake_get_color_mod('cupcake_set_sage_icon', '#4E7D5B');
+    $set_sand_bg   = cupcake_get_color_mod('cupcake_set_sand_bg', '#FFF1DC');
+    $set_sand_icon = cupcake_get_color_mod('cupcake_set_sand_icon', '#D98A2B');
+    $set_berry_bg  = cupcake_get_color_mod('cupcake_set_berry_bg', '#FBE8EF');
+    $set_berry_icon= cupcake_get_color_mod('cupcake_set_berry_icon', '#C9417A');
+    $set_grey_bg   = cupcake_get_color_mod('cupcake_set_grey_bg', '#F3F4F6');
+    $set_grey_icon = cupcake_get_color_mod('cupcake_set_grey_icon', '#6B7280');
+
     $font_size = (int) get_theme_mod('cupcake_body_font_size', 16);
     $font_size = max(14, min(20, $font_size));
     $logo_size = (int) get_theme_mod('cupcake_header_logo_width', 120);
@@ -406,6 +457,27 @@ function cupcake_customizer_css(): void {
     echo '--cc-header-text:' . esc_attr($header_tx) . ';';
     echo '--cc-footer-bg:' . esc_attr($footer_bg) . ';';
     echo '--cc-footer-text:' . esc_attr($footer_tx) . ';';
+    echo '--cc-set-rose-bg:' . esc_attr($set_rose_bg) . ';';
+    echo '--cc-set-rose-icon:' . esc_attr($set_rose_icon) . ';';
+    echo '--cc-set-sage-bg:' . esc_attr($set_sage_bg) . ';';
+    echo '--cc-set-sage-icon:' . esc_attr($set_sage_icon) . ';';
+    echo '--cc-set-sand-bg:' . esc_attr($set_sand_bg) . ';';
+    echo '--cc-set-sand-icon:' . esc_attr($set_sand_icon) . ';';
+    echo '--cc-set-berry-bg:' . esc_attr($set_berry_bg) . ';';
+    echo '--cc-set-berry-icon:' . esc_attr($set_berry_icon) . ';';
+    echo '--cc-set-grey-bg:' . esc_attr($set_grey_bg) . ';';
+    echo '--cc-set-grey-icon:' . esc_attr($set_grey_icon) . ';';
+    // Keep Elementor Global Color variable aliases available on frontend.
+    echo '--e-global-color-cupcake-rose-light:' . esc_attr($set_rose_bg) . ';';
+    echo '--e-global-color-cupcake-rose-dark:' . esc_attr($set_rose_icon) . ';';
+    echo '--e-global-color-cupcake-sage-light:' . esc_attr($set_sage_bg) . ';';
+    echo '--e-global-color-cupcake-sage-dark:' . esc_attr($set_sage_icon) . ';';
+    echo '--e-global-color-cupcake-sand-light:' . esc_attr($set_sand_bg) . ';';
+    echo '--e-global-color-cupcake-sand-dark:' . esc_attr($set_sand_icon) . ';';
+    echo '--e-global-color-cupcake-berry-light:' . esc_attr($set_berry_bg) . ';';
+    echo '--e-global-color-cupcake-berry-dark:' . esc_attr($set_berry_icon) . ';';
+    echo '--e-global-color-cupcake-grey-light:' . esc_attr($set_grey_bg) . ';';
+    echo '--e-global-color-cupcake-grey-dark:' . esc_attr($set_grey_icon) . ';';
     echo '--cc-body-font-size:' . esc_attr((string) $font_size) . 'px;';
     echo '--cc-header-logo-max-width:' . esc_attr((string) $logo_size) . 'px;';
     echo '}</style>' . "\n";

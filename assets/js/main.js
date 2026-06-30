@@ -188,4 +188,151 @@
         showSlide(0);
         startAutoplay();
     });
+
+    // Match subtitle/eyebrow accent color to the nearest matching background preset.
+    function applyElementorContextAccent() {
+        var rootStyles = window.getComputedStyle(document.documentElement);
+        var colorProbe = document.createElement('span');
+        colorProbe.style.position = 'absolute';
+        colorProbe.style.width = '0';
+        colorProbe.style.height = '0';
+        colorProbe.style.overflow = 'hidden';
+        colorProbe.style.visibility = 'hidden';
+        document.body.appendChild(colorProbe);
+
+        function normalizeColor(value) {
+            if (!value) {
+                return '';
+            }
+
+            colorProbe.style.color = value.trim();
+            return window.getComputedStyle(colorProbe).color;
+        }
+
+        function getToken(name, fallback) {
+            var value = rootStyles.getPropertyValue(name).trim();
+            if (!value) {
+                return fallback;
+            }
+
+            return value;
+        }
+
+        var presets = [
+            {
+                bg: normalizeColor(getToken('--cc-set-rose-bg', '#fff3f1')),
+                accent: getToken('--cc-set-rose-icon', '#fa4d56')
+            },
+            {
+                bg: normalizeColor(getToken('--cc-set-sage-bg', '#eaf3ec')),
+                accent: getToken('--cc-set-sage-icon', '#4e7d5b')
+            },
+            {
+                bg: normalizeColor(getToken('--cc-set-sand-bg', '#fff1dc')),
+                accent: getToken('--cc-set-sand-icon', '#d98a2b')
+            },
+            {
+                bg: normalizeColor(getToken('--cc-set-berry-bg', '#fbe8ef')),
+                accent: getToken('--cc-set-berry-icon', '#c9417a')
+            },
+            {
+                bg: normalizeColor(getToken('--cc-set-grey-bg', '#f3f4f6')),
+                accent: getToken('--cc-set-grey-icon', '#6b7280')
+            }
+        ];
+
+        var targets = document.querySelectorAll(
+            '.cc-blogs-widget__subtitle, .cc-section-intro__eyebrow, .cc-blog-archive__eyebrow'
+        );
+
+        function isTransparent(color) {
+            return (
+                !color ||
+                color === 'transparent' ||
+                color === 'rgba(0, 0, 0, 0)'
+            );
+        }
+
+        function findAccentForTarget(target) {
+            var node = target;
+
+            while (node && node !== document.documentElement) {
+                var background = window.getComputedStyle(node).backgroundColor;
+
+                if (!isTransparent(background)) {
+                    var match = presets.find(function (preset) {
+                        return preset.bg && preset.bg === background;
+                    });
+
+                    if (match) {
+                        return match.accent;
+                    }
+                }
+
+                node = node.parentElement;
+            }
+
+            return '';
+        }
+
+        targets.forEach(function (target) {
+            var accent = findAccentForTarget(target);
+
+            if (accent) {
+                target.style.setProperty('--cc-context-accent', accent);
+            } else {
+                target.style.removeProperty('--cc-context-accent');
+            }
+        });
+
+        document.body.removeChild(colorProbe);
+    }
+
+    if (document.body) {
+        applyElementorContextAccent();
+        window.setTimeout(applyElementorContextAccent, 250);
+        window.setTimeout(applyElementorContextAccent, 1000);
+        window.addEventListener('load', applyElementorContextAccent);
+
+        // Elementor editor updates styles and wrappers dynamically.
+        // Re-apply accent mapping when relevant nodes change.
+        var scheduled = false;
+        function scheduleAccentRefresh() {
+            if (scheduled) {
+                return;
+            }
+
+            scheduled = true;
+            window.requestAnimationFrame(function () {
+                scheduled = false;
+                applyElementorContextAccent();
+            });
+        }
+
+        var observer = new MutationObserver(function (mutations) {
+            for (var i = 0; i < mutations.length; i += 1) {
+                var mutation = mutations[i];
+
+                if (mutation.type === 'childList') {
+                    scheduleAccentRefresh();
+                    return;
+                }
+
+                if (
+                    mutation.type === 'attributes' &&
+                    (mutation.attributeName === 'style' || mutation.attributeName === 'class')
+                ) {
+                    scheduleAccentRefresh();
+                    return;
+                }
+            }
+        });
+
+        observer.observe(document.body, {
+            subtree: true,
+            childList: true,
+            attributes: true,
+            attributeFilter: ['style', 'class']
+        });
+    }
 })();
