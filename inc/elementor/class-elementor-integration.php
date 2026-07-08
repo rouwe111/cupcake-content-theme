@@ -251,6 +251,7 @@ class CupCake_Elementor_Integration {
         require_once get_template_directory() . '/inc/elementor/widgets/class-widget-small-content.php';
         require_once get_template_directory() . '/inc/elementor/widgets/class-widget-packages.php';
         require_once get_template_directory() . '/inc/elementor/widgets/class-widget-company-logos.php';
+        require_once get_template_directory() . '/inc/elementor/widgets/class-widget-banner.php';
 
         $widgets_manager->register(new CupCake_Widget_Hero());
         $widgets_manager->register(new CupCake_Widget_Section_Intro());
@@ -268,6 +269,7 @@ class CupCake_Elementor_Integration {
         $widgets_manager->register(new CupCake_Widget_Small_Content());
         $widgets_manager->register(new CupCake_Widget_Packages());
         $widgets_manager->register(new CupCake_Widget_Company_Logos());
+        $widgets_manager->register(new CupCake_Widget_Banner());
     }
 
     /**

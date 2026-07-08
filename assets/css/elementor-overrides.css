@@ -26,16 +26,40 @@
 
 /* Default spacing for newly added Elementor containers.
    This gives standard containers sensible horizontal and vertical rhythm
-   without requiring manual padding every time. */
+   without requiring manual padding every time.
+
+   Elementor's own core CSS (frontend.min.css) does this on every .e-con,
+   unconditionally, on every page load:
+
+     .e-con {
+       --padding-top: var(--container-default-padding-top, 10px);
+       --padding-right: var(--container-default-padding-right, 10px);
+       --padding-bottom: var(--container-default-padding-bottom, 10px);
+       --padding-left: var(--container-default-padding-left, 10px);
+     }
+
+   Setting --padding-top etc. ourselves does nothing reliable — Elementor's
+   own rule re-derives those same variables from --container-default-*
+   every time, so it always wins regardless of stylesheet order. The
+   --container-default-padding-* variables are the actual, intended
+   extension point for a theme default. A per-element Advanced > Padding
+   override still wins because it sets --padding-top/etc. directly as an
+   inline style, which has higher priority than any of these class rules. */
 .elementor .e-con {
-    padding: 96px 0 96px 0;
+    --container-default-padding-top: 96px;
+    --container-default-padding-bottom: 96px;
+    --container-default-padding-left: 0px;
+    --container-default-padding-right: 0px;
 }
 
-/* Elementor may apply padding on inner wrappers as well.
-   Keep spacing single-source on the outer container. */
-.elementor .e-con > .e-con-inner {
-    padding: 0;
-}
+/* NOTE: we intentionally do NOT zero out padding on .e-con > .e-con-inner.
+   In current Elementor container markup, vertical (block) padding is
+   actually rendered on .e-con-inner via padding-block-start/end (bound to
+   --padding-top/--padding-bottom), while .e-con itself only carries the
+   horizontal (inline) padding variables. A blanket `padding: 0` here was
+   silently canceling both the theme default padding and any per-element
+   Advanced > Padding override. Elementor's own CSS already zeroes
+   padding-inline-start/end on .e-con-inner, so nothing further is needed. */
 
 /* Keep explicitly full-width containers edge-to-edge. */
 .elementor .e-con.e-con-full {
@@ -236,6 +260,77 @@ body.home .elementor > .e-container:first-child {
     padding: 0;
 }
 
+/* ─── CupCake Banner widget ───────────────────────────────────────────────────── */
+
+.cc-banner {
+    display: flex;
+    align-items: center;
+    gap: var(--cc-space-3, 12px);
+    padding: var(--cc-space-4, 16px) var(--cc-space-5, 20px);
+    background-color: var(--cc-banner-bg, #fff1dc);
+    border: 1px solid var(--cc-banner-border, #f2e0c3);
+    border-radius: var(--cc-radius-md);
+}
+
+.cc-banner__icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--cc-banner-icon-color, #d98a2b);
+    font-size: 24px;
+    line-height: 1;
+}
+
+.cc-banner__icon i,
+.cc-banner__icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.cc-banner__icon .e-font-icon-svg,
+.cc-banner__icon [class*='e-fas-'],
+.cc-banner__icon [class*='e-far-'],
+.cc-banner__icon [class*='e-fab-'] {
+    width: 24px;
+    height: 24px;
+}
+
+.cc-banner__icon i,
+.cc-banner__icon i::before,
+.cc-banner__icon svg {
+    color: var(--cc-banner-icon-color, #d98a2b);
+}
+
+.cc-banner__icon i::before {
+    font-size: 1em;
+}
+
+.cc-banner__icon .e-font-icon-svg,
+.cc-banner__icon .e-font-icon-svg path {
+    fill: currentColor;
+}
+
+.cc-banner__icon svg [fill]:not([fill='none']) {
+    fill: currentColor;
+}
+
+.cc-banner__icon svg [stroke] {
+    stroke: currentColor;
+}
+
+.cc-banner__message {
+    color: var(--cc-banner-message-color, #5a4a2f);
+    font-family: var(--cc-font-body);
+    line-height: 1.5;
+}
+
+.cc-banner__message p:last-child {
+    margin-bottom: 0;
+}
+
 /* ─── Editor mode: section outline contrast fix ──────────────────────────────── */
 
 /* In the editor, Elementor renders a dashed outline on hover. Ensure it
@@ -252,8 +347,15 @@ body.home .elementor > .e-container:first-child {
 }
 
 @media (max-width: 1024px) {
+    /* See the note above the base .elementor .e-con rule: use
+       --container-default-padding-* (Elementor's own extension point),
+       not --padding-* directly, so per-element Advanced > Padding
+       overrides still win at this breakpoint too. */
     .elementor .e-con {
-        padding: 50px 15px 50px 15px;
+        --container-default-padding-top: 50px;
+        --container-default-padding-bottom: 50px;
+        --container-default-padding-left: 15px;
+        --container-default-padding-right: 15px;
     }
 }
 
@@ -269,6 +371,9 @@ body.home .elementor > .e-container:first-child {
     }
 
     .elementor .e-con {
-        padding: 50px 15px 50px 15px;
+        --container-default-padding-top: 50px;
+        --container-default-padding-bottom: 50px;
+        --container-default-padding-left: 15px;
+        --container-default-padding-right: 15px;
     }
 }
