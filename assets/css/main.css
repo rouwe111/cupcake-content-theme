@@ -2285,8 +2285,8 @@ p.cupcake-highlight-quote {
     transition: transform var(--cc-transition-fast), box-shadow var(--cc-transition-fast), background-color var(--cc-transition-fast);
 }
 
-.site-header__cta-link:hover,
-.site-header__cta-link:focus-visible {
+.site-header .site-header__cta-link:hover,
+.site-header .site-header__cta-link:focus-visible {
     color: #fff;
     text-decoration: none;
     background: #456f51;
