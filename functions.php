@@ -14,6 +14,7 @@ defined('ABSPATH') || exit;
 require_once get_template_directory() . '/inc/setup/theme-setup.php';
 require_once get_template_directory() . '/inc/setup/enqueue.php';
 require_once get_template_directory() . '/inc/setup/customizer.php';
+require_once get_template_directory() . '/inc/setup/version-check.php';
 
 /**
  * Boot Elementor integration once, when Elementor is available.
