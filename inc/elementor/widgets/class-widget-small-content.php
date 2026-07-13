@@ -10,6 +10,7 @@ declare(strict_types=1);
 defined('ABSPATH') || exit;
 
 require_once __DIR__ . '/trait-color-sets.php';
+require_once __DIR__ . '/trait-heading-tag.php';
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
@@ -19,6 +20,7 @@ use Elementor\Controls_Manager;
  */
 class CupCake_Widget_Small_Content extends Widget_Base {
     use CupCake_Color_Sets;
+    use CupCake_Heading_Tag;
 
     /** {@inheritdoc} */
     public function get_name(): string {
@@ -62,6 +64,26 @@ class CupCake_Widget_Small_Content extends Widget_Base {
                 'type'        => Controls_Manager::TEXT,
                 'default'     => __('Snel een vast pakket?', 'cupcake'),
                 'placeholder' => __('Enter title', 'cupcake'),
+            ]
+        );
+
+        $this->add_control(
+            'title_tag',
+            [
+                'label'   => __('Title HTML tag', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => 'h3',
+                'options' => $this->get_heading_tag_options(),
+            ]
+        );
+
+        $this->add_control(
+            'title_style',
+            [
+                'label'   => __('Title style', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => '',
+                'options' => $this->get_title_style_options(),
             ]
         );
 
@@ -134,6 +156,8 @@ class CupCake_Widget_Small_Content extends Widget_Base {
         $settings = $this->get_settings_for_display();
 
         $title       = trim((string) ($settings['title'] ?? ''));
+        $title_tag   = $this->sanitize_heading_tag((string) ($settings['title_tag'] ?? 'h3'), 'h3');
+        $title_style = $this->resolve_title_style_class((string) ($settings['title_style'] ?? ''));
         $description = trim((string) ($settings['description'] ?? ''));
 
         $resolved_colors = $this->resolve_color_set(
@@ -155,7 +179,7 @@ class CupCake_Widget_Small_Content extends Widget_Base {
         ?>
         <aside class="cc-small-content" style="<?php echo esc_attr($style); ?>">
             <?php if ('' !== $title) : ?>
-                <h3 class="cc-small-content__title"><?php echo esc_html($title); ?></h3>
+                <<?php echo esc_attr($title_tag); ?> class="cc-small-content__title<?php echo $title_style ? ' ' . esc_attr($title_style) : ''; ?>"><?php echo esc_html($title); ?></<?php echo esc_attr($title_tag); ?>>
             <?php endif; ?>
 
             <?php if ('' !== $description) : ?>

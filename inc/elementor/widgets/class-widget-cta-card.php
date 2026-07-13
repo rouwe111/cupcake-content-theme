@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 defined('ABSPATH') || exit;
 
+require_once __DIR__ . '/trait-heading-tag.php';
+
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 use Elementor\Icons_Manager;
@@ -17,6 +19,7 @@ use Elementor\Icons_Manager;
  * Feature / call-to-action card with icon, heading, body text, and a link.
  */
 class CupCake_Widget_CTA_Card extends Widget_Base {
+    use CupCake_Heading_Tag;
 
     /**
      * Build options for internal link selection.
@@ -114,6 +117,26 @@ class CupCake_Widget_CTA_Card extends Widget_Base {
                 'default'     => __('Feature Title', 'cupcake'),
                 'placeholder' => __('Enter card heading', 'cupcake'),
                 'separator'   => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'heading_tag',
+            [
+                'label'   => __('Heading HTML tag', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => 'h3',
+                'options' => $this->get_heading_tag_options(),
+            ]
+        );
+
+        $this->add_control(
+            'heading_title_style',
+            [
+                'label'   => __('Title style', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => '',
+                'options' => $this->get_title_style_options(),
             ]
         );
 
@@ -258,8 +281,10 @@ class CupCake_Widget_CTA_Card extends Widget_Base {
         $padding       = (int) ($settings['card_padding']['size'] ?? 32);
         $icon_color    = esc_attr($settings['icon_color'] ?? '#E94560');
 
-        $heading   = esc_html($settings['heading'] ?? '');
-        $body_text = wp_kses_post($settings['body_text'] ?? '');
+        $heading       = esc_html($settings['heading'] ?? '');
+        $heading_tag   = $this->sanitize_heading_tag((string) ($settings['heading_tag'] ?? 'h3'), 'h3');
+        $heading_style = $this->resolve_title_style_class((string) ($settings['heading_title_style'] ?? ''));
+        $body_text     = wp_kses_post($settings['body_text'] ?? '');
         $heading_id = $this->get_id() . '-heading';
 
         $cta_label = esc_html($settings['cta_label'] ?? '');
@@ -307,7 +332,7 @@ class CupCake_Widget_CTA_Card extends Widget_Base {
             <?php endif; ?>
 
             <?php if ($heading) : ?>
-                <h3 id="<?php echo esc_attr($heading_id); ?>" class="cc-card__heading"><?php echo $heading; ?></h3>
+                <<?php echo esc_attr($heading_tag); ?> id="<?php echo esc_attr($heading_id); ?>" class="cc-card__heading<?php echo $heading_style ? ' ' . esc_attr($heading_style) : ''; ?>"><?php echo $heading; ?></<?php echo esc_attr($heading_tag); ?>>
             <?php endif; ?>
 
             <?php if ($body_text) : ?>

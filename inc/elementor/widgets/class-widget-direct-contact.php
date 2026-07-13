@@ -10,6 +10,7 @@ declare(strict_types=1);
 defined('ABSPATH') || exit;
 
 require_once __DIR__ . '/trait-color-sets.php';
+require_once __DIR__ . '/trait-heading-tag.php';
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
@@ -21,6 +22,7 @@ use Elementor\Icons_Manager;
  */
 class CupCake_Widget_Direct_Contact extends Widget_Base {
     use CupCake_Color_Sets;
+    use CupCake_Heading_Tag;
 
     /** {@inheritdoc} */
     public function get_style_depends(): array {
@@ -74,6 +76,26 @@ class CupCake_Widget_Direct_Contact extends Widget_Base {
                 'type'        => Controls_Manager::TEXT,
                 'default'     => __('Direct contact', 'cupcake'),
                 'placeholder' => __('Enter title', 'cupcake'),
+            ]
+        );
+
+        $this->add_control(
+            'heading_tag',
+            [
+                'label'   => __('Title HTML tag', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => 'h3',
+                'options' => $this->get_heading_tag_options(),
+            ]
+        );
+
+        $this->add_control(
+            'heading_title_style',
+            [
+                'label'   => __('Title style', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => '',
+                'options' => $this->get_title_style_options(),
             ]
         );
 
@@ -291,8 +313,10 @@ class CupCake_Widget_Direct_Contact extends Widget_Base {
     protected function render(): void {
         $settings = $this->get_settings_for_display();
 
-        $title        = trim((string) ($settings['title'] ?? ''));
-        $items        = $settings['items'] ?? [];
+        $title         = trim((string) ($settings['title'] ?? ''));
+        $heading_tag   = $this->sanitize_heading_tag((string) ($settings['heading_tag'] ?? 'h3'), 'h3');
+        $heading_style = $this->resolve_title_style_class((string) ($settings['heading_title_style'] ?? ''));
+        $items         = $settings['items'] ?? [];
         $social_items = $settings['social_items'] ?? [];
         $heading_id   = $this->get_id() . '-title';
 
@@ -317,7 +341,7 @@ class CupCake_Widget_Direct_Contact extends Widget_Base {
         ?>
         <section class="cc-direct-contact" style="<?php echo esc_attr($style); ?>" <?php if ('' !== $title) : ?>aria-labelledby="<?php echo esc_attr($heading_id); ?>"<?php else : ?>aria-label="<?php echo esc_attr__('Direct contact', 'cupcake'); ?>"<?php endif; ?>>
             <?php if ('' !== $title) : ?>
-                <h3 id="<?php echo esc_attr($heading_id); ?>" class="cc-direct-contact__title"><?php echo esc_html($title); ?></h3>
+                <<?php echo esc_attr($heading_tag); ?> id="<?php echo esc_attr($heading_id); ?>" class="cc-direct-contact__title<?php echo $heading_style ? ' ' . esc_attr($heading_style) : ''; ?>"><?php echo esc_html($title); ?></<?php echo esc_attr($heading_tag); ?>>
             <?php endif; ?>
 
             <?php if (is_array($items) && ! empty($items)) : ?>

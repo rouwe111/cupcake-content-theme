@@ -10,6 +10,7 @@ declare(strict_types=1);
 defined('ABSPATH') || exit;
 
 require_once __DIR__ . '/trait-color-sets.php';
+require_once __DIR__ . '/trait-heading-tag.php';
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
@@ -20,6 +21,7 @@ use Elementor\Repeater;
  */
 class CupCake_Widget_Packages extends Widget_Base {
     use CupCake_Color_Sets;
+    use CupCake_Heading_Tag;
 
     /**
      * Build options for internal link selection.
@@ -111,6 +113,26 @@ class CupCake_Widget_Packages extends Widget_Base {
                 'type'        => Controls_Manager::TEXT,
                 'default'     => __('Pakketten', 'cupcake'),
                 'placeholder' => __('Enter section title', 'cupcake'),
+            ]
+        );
+
+        $this->add_control(
+            'section_title_tag',
+            [
+                'label'   => __('Section title HTML tag', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => 'h2',
+                'options' => $this->get_heading_tag_options(),
+            ]
+        );
+
+        $this->add_control(
+            'section_title_style',
+            [
+                'label'   => __('Title style', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => '',
+                'options' => $this->get_title_style_options(),
             ]
         );
 
@@ -366,8 +388,10 @@ class CupCake_Widget_Packages extends Widget_Base {
     protected function render(): void {
         $settings = $this->get_settings_for_display();
 
-        $section_title    = trim((string) ($settings['section_title'] ?? ''));
-        $section_subtitle = trim((string) ($settings['section_subtitle'] ?? ''));
+        $section_title       = trim((string) ($settings['section_title'] ?? ''));
+        $section_title_tag   = $this->sanitize_heading_tag((string) ($settings['section_title_tag'] ?? 'h2'), 'h2');
+        $section_title_style = $this->resolve_title_style_class((string) ($settings['section_title_style'] ?? ''));
+        $section_subtitle    = trim((string) ($settings['section_subtitle'] ?? ''));
         $packages         = $settings['packages'] ?? [];
         $heading_id       = $this->get_id() . '-title';
         $schema_items     = [];
@@ -381,7 +405,7 @@ class CupCake_Widget_Packages extends Widget_Base {
             <?php if ('' !== $section_title || '' !== $section_subtitle) : ?>
                 <header class="cc-packages-widget__header">
                     <?php if ('' !== $section_title) : ?>
-                        <h2 id="<?php echo esc_attr($heading_id); ?>" class="cc-packages-widget__title"><?php echo esc_html($section_title); ?></h2>
+                        <<?php echo esc_attr($section_title_tag); ?> id="<?php echo esc_attr($heading_id); ?>" class="cc-packages-widget__title<?php echo $section_title_style ? ' ' . esc_attr($section_title_style) : ''; ?>"><?php echo esc_html($section_title); ?></<?php echo esc_attr($section_title_tag); ?>>
                     <?php endif; ?>
 
                     <?php if ('' !== $section_subtitle) : ?>

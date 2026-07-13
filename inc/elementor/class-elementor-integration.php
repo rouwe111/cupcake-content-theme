@@ -159,6 +159,46 @@ class CupCake_Elementor_Integration {
                 'font_family' => 'Inter',
                 'font_weight' => '400',
             ],
+            [
+                'id'          => 'cupcake-content-hero',
+                'title'       => 'CC Hero',
+                'font_family' => 'Poppins',
+                'font_weight' => '700',
+                'font_size'   => ['unit' => 'px', 'size' => 72],
+                'line_height' => ['unit' => 'em', 'size' => 1.2],
+            ],
+            [
+                'id'          => 'cupcake-content-h1',
+                'title'       => 'CC H1',
+                'font_family' => 'Poppins',
+                'font_weight' => '700',
+                'font_size'   => ['unit' => 'px', 'size' => 48],
+                'line_height' => ['unit' => 'em', 'size' => 1.2],
+            ],
+            [
+                'id'          => 'cupcake-content-h2',
+                'title'       => 'CC H2',
+                'font_family' => 'Poppins',
+                'font_weight' => '700',
+                'font_size'   => ['unit' => 'px', 'size' => 32],
+                'line_height' => ['unit' => 'em', 'size' => 1.2],
+            ],
+            [
+                'id'          => 'cupcake-content-h3',
+                'title'       => 'CC H3',
+                'font_family' => 'Poppins',
+                'font_weight' => '700',
+                'font_size'   => ['unit' => 'px', 'size' => 24],
+                'line_height' => ['unit' => 'em', 'size' => 1.2],
+            ],
+            [
+                'id'          => 'cupcake-content-body',
+                'title'       => 'CC Body',
+                'font_family' => 'Poppins',
+                'font_weight' => '400',
+                'font_size'   => ['unit' => 'px', 'size' => 16],
+                'line_height' => ['unit' => 'em', 'size' => 1.5],
+            ],
         ];
 
         // Retrieve existing kit settings and merge ours in.
@@ -201,19 +241,74 @@ class CupCake_Elementor_Integration {
 
         foreach ($global_fonts as $font) {
             $exists = false;
-            foreach ($existing_fonts as $ef) {
-                if (($ef['_id'] ?? '') === $font['id']) {
-                    $exists = true;
-                    break;
+
+            foreach ($existing_fonts as $index => $ef) {
+                if (($ef['_id'] ?? '') !== $font['id']) {
+                    continue;
                 }
+
+                $exists = true;
+
+                if (($ef['title'] ?? '') !== $font['title']) {
+                    $existing_fonts[$index]['title'] = $font['title'];
+                    $did_change = true;
+                }
+
+                // Self-heal legacy entries seeded with the wrong (unprefixed)
+                // array keys — Elementor's schema expects "typography_*".
+                if (isset($ef['font_family'])) {
+                    unset($existing_fonts[$index]['font_family']);
+                    $did_change = true;
+                }
+
+                if (isset($ef['font_weight'])) {
+                    unset($existing_fonts[$index]['font_weight']);
+                    $did_change = true;
+                }
+
+                // Keep typography values in sync with the source of truth
+                // defined above, so later adjustments here also reach kits
+                // that were already seeded.
+                if (($ef['typography_font_family'] ?? null) !== $font['font_family']) {
+                    $existing_fonts[$index]['typography_font_family'] = $font['font_family'];
+                    $did_change = true;
+                }
+
+                if (($ef['typography_font_weight'] ?? null) !== $font['font_weight']) {
+                    $existing_fonts[$index]['typography_font_weight'] = $font['font_weight'];
+                    $did_change = true;
+                }
+
+                if (isset($font['font_size']) && ($ef['typography_font_size'] ?? null) !== $font['font_size']) {
+                    $existing_fonts[$index]['typography_font_size'] = $font['font_size'];
+                    $did_change = true;
+                }
+
+                if (isset($font['line_height']) && ($ef['typography_line_height'] ?? null) !== $font['line_height']) {
+                    $existing_fonts[$index]['typography_line_height'] = $font['line_height'];
+                    $did_change = true;
+                }
+
+                break;
             }
+
             if (! $exists) {
-                $existing_fonts[] = [
-                    '_id'         => $font['id'],
-                    'title'       => $font['title'],
-                    'font_family' => $font['font_family'],
-                    'font_weight' => $font['font_weight'],
+                $entry = [
+                    '_id'                    => $font['id'],
+                    'title'                  => $font['title'],
+                    'typography_font_family' => $font['font_family'],
+                    'typography_font_weight' => $font['font_weight'],
                 ];
+
+                if (isset($font['font_size'])) {
+                    $entry['typography_font_size'] = $font['font_size'];
+                }
+
+                if (isset($font['line_height'])) {
+                    $entry['typography_line_height'] = $font['line_height'];
+                }
+
+                $existing_fonts[] = $entry;
                 $did_change = true;
             }
         }

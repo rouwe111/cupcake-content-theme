@@ -10,6 +10,7 @@ declare(strict_types=1);
 defined('ABSPATH') || exit;
 
 require_once __DIR__ . '/trait-color-sets.php';
+require_once __DIR__ . '/trait-heading-tag.php';
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
@@ -21,6 +22,7 @@ use Elementor\Icons_Manager;
  */
 class CupCake_Widget_Services_Accordion extends Widget_Base {
     use CupCake_Color_Sets;
+    use CupCake_Heading_Tag;
 
     /** {@inheritdoc} */
     public function get_style_depends(): array {
@@ -74,6 +76,26 @@ class CupCake_Widget_Services_Accordion extends Widget_Base {
                 'type'        => Controls_Manager::TEXT,
                 'default'     => __('Onze diensten', 'cupcake'),
                 'placeholder' => __('Enter title', 'cupcake'),
+            ]
+        );
+
+        $this->add_control(
+            'title_tag',
+            [
+                'label'   => __('Section title HTML tag', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => 'h2',
+                'options' => $this->get_heading_tag_options(),
+            ]
+        );
+
+        $this->add_control(
+            'title_style',
+            [
+                'label'   => __('Title style', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => '',
+                'options' => $this->get_title_style_options(),
             ]
         );
 
@@ -210,10 +232,12 @@ class CupCake_Widget_Services_Accordion extends Widget_Base {
 
     /** {@inheritdoc} */
     protected function render(): void {
-        $settings   = $this->get_settings_for_display();
-        $title      = trim((string) ($settings['title'] ?? ''));
-        $items      = $settings['items'] ?? [];
-        $open_first = 'yes' === ($settings['open_first'] ?? 'yes');
+        $settings    = $this->get_settings_for_display();
+        $title       = trim((string) ($settings['title'] ?? ''));
+        $title_tag   = $this->sanitize_heading_tag((string) ($settings['title_tag'] ?? 'h2'), 'h2');
+        $title_style = $this->resolve_title_style_class((string) ($settings['title_style'] ?? ''));
+        $items       = $settings['items'] ?? [];
+        $open_first  = 'yes' === ($settings['open_first'] ?? 'yes');
 
         if (! is_array($items) || empty($items)) {
             return;
@@ -223,7 +247,7 @@ class CupCake_Widget_Services_Accordion extends Widget_Base {
         ?>
         <section class="cc-faq-widget cc-services-accordion" aria-label="<?php echo esc_attr__('Services accordion', 'cupcake'); ?>">
             <?php if ('' !== $title) : ?>
-                <h2 class="cc-faq-widget__title"><?php echo esc_html($title); ?></h2>
+                <<?php echo esc_attr($title_tag); ?> class="cc-faq-widget__title<?php echo $title_style ? ' ' . esc_attr($title_style) : ''; ?>"><?php echo esc_html($title); ?></<?php echo esc_attr($title_tag); ?>>
             <?php endif; ?>
 
             <div class="cc-faq-widget__list" data-cc-accordion="single">

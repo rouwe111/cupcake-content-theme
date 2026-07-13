@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 defined('ABSPATH') || exit;
 
+require_once __DIR__ . '/trait-heading-tag.php';
+
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 
@@ -16,24 +18,7 @@ use Elementor\Controls_Manager;
  * Full-width hero section widget with heading, subheading, and two CTA buttons.
  */
 class CupCake_Widget_Hero extends Widget_Base {
-
-    /**
-     * Allowed semantic heading tag options.
-     *
-     * @return array<string, string>
-     */
-    private function get_heading_tag_options(): array {
-        return [
-            'h1' => __('H1', 'cupcake'),
-            'h2' => __('H2', 'cupcake'),
-            'h3' => __('H3', 'cupcake'),
-            'h4' => __('H4', 'cupcake'),
-            'h5' => __('H5', 'cupcake'),
-            'h6' => __('H6', 'cupcake'),
-            'p'  => __('Paragraph', 'cupcake'),
-            'div'=> __('DIV', 'cupcake'),
-        ];
-    }
+    use CupCake_Heading_Tag;
 
     /**
      * Get available hero theme presets.
@@ -192,6 +177,16 @@ class CupCake_Widget_Hero extends Widget_Base {
                 'type'    => Controls_Manager::SELECT,
                 'default' => 'h1',
                 'options' => $this->get_heading_tag_options(),
+            ]
+        );
+
+        $this->add_control(
+            'heading_title_style',
+            [
+                'label'   => __('Title style', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => '',
+                'options' => $this->get_title_style_options(),
             ]
         );
 
@@ -478,8 +473,8 @@ class CupCake_Widget_Hero extends Widget_Base {
         $label_text      = esc_html($settings['label_text'] ?? '');
         $heading_intro   = wp_kses_post($settings['heading_intro'] ?? '');
         $heading_marked  = esc_html($settings['heading_highlight'] ?? '');
-        $heading_tag     = strtolower((string) ($settings['heading_tag'] ?? 'h1'));
-        $heading_tag     = in_array($heading_tag, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div'], true) ? $heading_tag : 'h1';
+        $heading_tag     = $this->sanitize_heading_tag((string) ($settings['heading_tag'] ?? 'h1'), 'h1');
+        $heading_style   = $this->resolve_title_style_class((string) ($settings['heading_title_style'] ?? ''));
         $description     = wp_kses_post($settings['description'] ?? '');
         $hero_image_url  = esc_url($settings['hero_image']['url'] ?? '');
         $hero_image_alt  = esc_attr($settings['hero_image_alt'] ?? '');
@@ -577,7 +572,7 @@ class CupCake_Widget_Hero extends Widget_Base {
                     <?php endif; ?>
 
                     <?php if ($heading_intro || $heading_marked) : ?>
-                        <<?php echo esc_attr($heading_tag); ?> id="<?php echo esc_attr($heading_id); ?>" class="cc-hero__heading">
+                        <<?php echo esc_attr($heading_tag); ?> id="<?php echo esc_attr($heading_id); ?>" class="cc-hero__heading<?php echo $heading_style ? ' ' . esc_attr($heading_style) : ''; ?>">
                             <?php echo $heading_intro; ?>
                             <?php if ($heading_marked) : ?>
                                 <span class="cc-hero__heading-marked"><?php echo $heading_marked; ?></span>

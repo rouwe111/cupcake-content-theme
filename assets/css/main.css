@@ -64,6 +64,13 @@ h4 { font-size: var(--cc-text-xl); }
 h5 { font-size: var(--cc-text-lg); }
 h6 { font-size: var(--cc-text-base); }
 
+/* ─── Highlighted text ───────────────────────────────────────────────────────── */
+
+mark {
+    background-color: transparent;
+    color: #FA4D56;
+}
+
 /* ─── Links ──────────────────────────────────────────────────────────────────── */
 
 a {
@@ -274,6 +281,10 @@ small     { font-size: var(--cc-text-sm); }
     width: 100%;
     height: auto;
     object-fit: cover;
+}
+
+.cc-image__wrap--circle .cc-image__img {
+    height: 100%;
 }
 
 /* ─── Card ───────────────────────────────────────────────────────────────────── */
@@ -1278,7 +1289,7 @@ small     { font-size: var(--cc-text-sm); }
     margin: 0;
     font-family: 'Poppins', var(--cc-font-body);
     font-weight: 600;
-    font-size: clamp(20px, 2.4vw, 28px);
+    font-size: clamp(17px, 2vw, 23px);
     line-height: 1.4;
     letter-spacing: -0.01em;
     color: #211f1e;
@@ -2156,12 +2167,12 @@ p.cupcake-highlight-quote {
 .cc-testimonial__name {
     font-weight: 700;
     font-style: normal;
-    font-size: var(--cc-text-sm);
+    font-size: clamp(0.8rem, 0.76rem + 0.2vw, 0.9rem);
     color: var(--cc-color-text);
 }
 
 .cc-testimonial__role {
-    font-size: var(--cc-text-xs);
+    font-size: clamp(0.7rem, 0.67rem + 0.15vw, 0.8rem);
     color: var(--cc-color-text-muted);
 }
 
@@ -3656,4 +3667,56 @@ body.single-post .cc-single-post__title {
         width: 100%;
         justify-content: center;
     }
+}
+
+/* ─── Title style overrides ──────────────────────────────────────────────────────
+   Widget titles carry their own component-specific look by default. Applying
+   one of these modifier classes (via each widget's "Title style" control)
+   replaces that look with the theme's global heading scale, independent of
+   which HTML tag the title actually renders as. Declared last so it wins
+   over every widget's own title rule at equal (single-class) specificity. */
+
+.cc-heading-style--hero {
+    font-family: 'Poppins', var(--cc-font-body);
+    font-weight: 700;
+    font-size: var(--cc-text-4xl);
+    line-height: 1.2;
+    letter-spacing: normal;
+    color: var(--cc-color-text);
+}
+
+.cc-heading-style--h1 {
+    font-family: 'Poppins', var(--cc-font-body);
+    font-weight: 700;
+    font-size: var(--cc-text-3xl);
+    line-height: 1.2;
+    letter-spacing: normal;
+    color: var(--cc-color-text);
+}
+
+.cc-heading-style--h2 {
+    font-family: 'Poppins', var(--cc-font-body);
+    font-weight: 700;
+    font-size: var(--cc-text-2xl);
+    line-height: 1.2;
+    letter-spacing: normal;
+    color: var(--cc-color-text);
+}
+
+.cc-heading-style--h3 {
+    font-family: 'Poppins', var(--cc-font-body);
+    font-weight: 700;
+    font-size: var(--cc-text-xl);
+    line-height: 1.2;
+    letter-spacing: normal;
+    color: var(--cc-color-text);
+}
+
+.cc-heading-style--p {
+    font-family: 'Poppins', var(--cc-font-body);
+    font-weight: 400;
+    font-size: var(--cc-text-base);
+    line-height: 1.5;
+    letter-spacing: normal;
+    color: var(--cc-color-text);
 }

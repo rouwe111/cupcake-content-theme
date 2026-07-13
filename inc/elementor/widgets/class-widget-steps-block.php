@@ -10,6 +10,7 @@ declare(strict_types=1);
 defined('ABSPATH') || exit;
 
 require_once __DIR__ . '/trait-color-sets.php';
+require_once __DIR__ . '/trait-heading-tag.php';
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
@@ -19,24 +20,7 @@ use Elementor\Controls_Manager;
  */
 class CupCake_Widget_Steps_Block extends Widget_Base {
     use CupCake_Color_Sets;
-
-    /**
-     * Allowed semantic heading tag options.
-     *
-     * @return array<string, string>
-     */
-    private function get_heading_tag_options(): array {
-        return [
-            'h1' => __('H1', 'cupcake'),
-            'h2' => __('H2', 'cupcake'),
-            'h3' => __('H3', 'cupcake'),
-            'h4' => __('H4', 'cupcake'),
-            'h5' => __('H5', 'cupcake'),
-            'h6' => __('H6', 'cupcake'),
-            'p'  => __('Paragraph', 'cupcake'),
-            'div'=> __('DIV', 'cupcake'),
-        ];
-    }
+    use CupCake_Heading_Tag;
 
     /** {@inheritdoc} */
     public function get_name(): string {
@@ -100,6 +84,16 @@ class CupCake_Widget_Steps_Block extends Widget_Base {
                 'type'    => Controls_Manager::SELECT,
                 'default' => 'h3',
                 'options' => $this->get_heading_tag_options(),
+            ]
+        );
+
+        $this->add_control(
+            'title_style',
+            [
+                'label'   => __('Title style', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => '',
+                'options' => $this->get_title_style_options(),
             ]
         );
 
@@ -184,8 +178,8 @@ class CupCake_Widget_Steps_Block extends Widget_Base {
         $settings = $this->get_settings_for_display();
 
         $title       = esc_html($settings['title'] ?? '');
-        $title_tag   = strtolower((string) ($settings['title_tag'] ?? 'h3'));
-        $title_tag   = in_array($title_tag, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div'], true) ? $title_tag : 'h3';
+        $title_tag   = $this->sanitize_heading_tag((string) ($settings['title_tag'] ?? 'h3'), 'h3');
+        $title_style = $this->resolve_title_style_class((string) ($settings['title_style'] ?? ''));
         $description = wp_kses_post($settings['description'] ?? '');
         $step_number = esc_html($settings['step_number'] ?? '');
 
@@ -213,7 +207,7 @@ class CupCake_Widget_Steps_Block extends Widget_Base {
             <?php endif; ?>
 
             <?php if ($title) : ?>
-                <<?php echo esc_attr($title_tag); ?> class="cc-steps-block__title"><?php echo $title; ?></<?php echo esc_attr($title_tag); ?>>
+                <<?php echo esc_attr($title_tag); ?> class="cc-steps-block__title<?php echo $title_style ? ' ' . esc_attr($title_style) : ''; ?>"><?php echo $title; ?></<?php echo esc_attr($title_tag); ?>>
             <?php endif; ?>
 
             <?php if ($description) : ?>

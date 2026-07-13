@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 defined('ABSPATH') || exit;
 
+require_once __DIR__ . '/trait-heading-tag.php';
+
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 
@@ -16,24 +18,7 @@ use Elementor\Controls_Manager;
  * Reusable section intro block with eyebrow, title, and description.
  */
 class CupCake_Widget_Section_Intro extends Widget_Base {
-
-    /**
-     * Allowed semantic heading tag options.
-     *
-     * @return array<string, string>
-     */
-    private function get_heading_tag_options(): array {
-        return [
-            'h1' => __('H1', 'cupcake'),
-            'h2' => __('H2', 'cupcake'),
-            'h3' => __('H3', 'cupcake'),
-            'h4' => __('H4', 'cupcake'),
-            'h5' => __('H5', 'cupcake'),
-            'h6' => __('H6', 'cupcake'),
-            'p'  => __('Paragraph', 'cupcake'),
-            'div'=> __('DIV', 'cupcake'),
-        ];
-    }
+    use CupCake_Heading_Tag;
 
     /** {@inheritdoc} */
     public function get_name(): string {
@@ -97,6 +82,16 @@ class CupCake_Widget_Section_Intro extends Widget_Base {
                 'type'    => Controls_Manager::SELECT,
                 'default' => 'h2',
                 'options' => $this->get_heading_tag_options(),
+            ]
+        );
+
+        $this->add_control(
+            'title_style',
+            [
+                'label'   => __('Title style', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => '',
+                'options' => $this->get_title_style_options(),
             ]
         );
 
@@ -196,8 +191,8 @@ class CupCake_Widget_Section_Intro extends Widget_Base {
 
         $eyebrow     = esc_html($settings['eyebrow'] ?? '');
         $title       = esc_html($settings['title'] ?? '');
-        $title_tag   = strtolower((string) ($settings['title_tag'] ?? 'h2'));
-        $title_tag   = in_array($title_tag, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div'], true) ? $title_tag : 'h2';
+        $title_tag   = $this->sanitize_heading_tag((string) ($settings['title_tag'] ?? 'h2'), 'h2');
+        $title_style = $this->resolve_title_style_class((string) ($settings['title_style'] ?? ''));
         $description = wp_kses_post($settings['description'] ?? '');
 
         $align = in_array($settings['align'] ?? 'center', ['left', 'center'], true) ? $settings['align'] : 'center';
@@ -224,7 +219,7 @@ class CupCake_Widget_Section_Intro extends Widget_Base {
             <?php endif; ?>
 
             <?php if ($title) : ?>
-                <<?php echo esc_attr($title_tag); ?> class="cc-section-intro__title"><?php echo $title; ?></<?php echo esc_attr($title_tag); ?>>
+                <<?php echo esc_attr($title_tag); ?> class="cc-section-intro__title<?php echo $title_style ? ' ' . esc_attr($title_style) : ''; ?>"><?php echo $title; ?></<?php echo esc_attr($title_tag); ?>>
             <?php endif; ?>
 
             <?php if ($description) : ?>

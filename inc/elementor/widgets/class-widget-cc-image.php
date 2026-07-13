@@ -106,6 +106,18 @@ class CupCake_Widget_CC_Image extends Widget_Base {
         );
 
         $this->add_control(
+            'is_circle',
+            [
+                'label'        => __('Circle', 'cupcake'),
+                'type'         => Controls_Manager::SWITCHER,
+                'label_on'     => __('Yes', 'cupcake'),
+                'label_off'    => __('No', 'cupcake'),
+                'return_value' => 'yes',
+                'default'      => '',
+            ]
+        );
+
+        $this->add_control(
             'border_radius',
             [
                 'label'      => __('Border radius (px)', 'cupcake'),
@@ -119,6 +131,9 @@ class CupCake_Widget_CC_Image extends Widget_Base {
                     ],
                 ],
                 'default'    => ['unit' => 'px', 'size' => 34],
+                'condition'  => [
+                    'is_circle!' => 'yes',
+                ],
             ]
         );
 
@@ -155,20 +170,22 @@ class CupCake_Widget_CC_Image extends Widget_Base {
         $image_alt     = esc_attr($settings['image_alt'] ?? '');
         $show_border   = 'yes' === ($settings['show_border'] ?? 'yes');
         $show_shadow   = 'yes' === ($settings['show_shadow'] ?? 'yes');
+        $is_circle     = 'yes' === ($settings['is_circle'] ?? '');
         $border_radius = (float) ($settings['border_radius']['size'] ?? 34);
         $rotation      = (float) ($settings['rotation']['size'] ?? 1.6);
 
         $wrap_style = sprintf(
-            'border-radius:%1$spx;border:%2$s;box-shadow:%3$s;transform:rotate(%4$sdeg);',
-            esc_attr((string) $border_radius),
+            'border-radius:%1$s;border:%2$s;box-shadow:%3$s;transform:rotate(%4$sdeg);%5$s',
+            $is_circle ? '50%' : esc_attr((string) $border_radius) . 'px',
             $show_border ? '10px solid #fff' : 'none',
             $show_shadow ? '0 44px 80px -42px rgba(33, 31, 30, 0.45)' : 'none',
-            esc_attr((string) $rotation)
+            esc_attr((string) $rotation),
+            $is_circle ? 'aspect-ratio:1/1;' : ''
         );
 
         ?>
         <div class="cc-image">
-            <div class="cc-image__wrap" style="<?php echo esc_attr($wrap_style); ?>">
+            <div class="cc-image__wrap<?php echo $is_circle ? ' cc-image__wrap--circle' : ''; ?>" style="<?php echo esc_attr($wrap_style); ?>">
                 <img src="<?php echo $image_url; ?>"
                      alt="<?php echo $image_alt; ?>"
                      class="cc-image__img"

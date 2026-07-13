@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 defined('ABSPATH') || exit;
 
+require_once __DIR__ . '/trait-heading-tag.php';
+
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 
@@ -16,6 +18,7 @@ use Elementor\Controls_Manager;
  * Standout bottom CTA banner with decorative background shapes.
  */
 class CupCake_Widget_Bloom_Banner extends Widget_Base {
+    use CupCake_Heading_Tag;
 
     /**
      * Build options for internal link selection.
@@ -86,6 +89,26 @@ class CupCake_Widget_Bloom_Banner extends Widget_Base {
                 'type'        => Controls_Manager::TEXT,
                 'default'     => __('Klaar om te bloeien?', 'cupcake'),
                 'placeholder' => __('Enter heading', 'cupcake'),
+            ]
+        );
+
+        $this->add_control(
+            'heading_tag',
+            [
+                'label'   => __('Heading HTML tag', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => 'h2',
+                'options' => $this->get_heading_tag_options(),
+            ]
+        );
+
+        $this->add_control(
+            'heading_title_style',
+            [
+                'label'   => __('Title style', 'cupcake'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => '',
+                'options' => $this->get_title_style_options(),
             ]
         );
 
@@ -229,8 +252,10 @@ class CupCake_Widget_Bloom_Banner extends Widget_Base {
     protected function render(): void {
         $settings = $this->get_settings_for_display();
 
-        $heading     = esc_html($settings['heading'] ?? '');
-        $description = wp_kses_post($settings['description'] ?? '');
+        $heading       = esc_html($settings['heading'] ?? '');
+        $heading_tag   = $this->sanitize_heading_tag((string) ($settings['heading_tag'] ?? 'h2'), 'h2');
+        $heading_style = $this->resolve_title_style_class((string) ($settings['heading_title_style'] ?? ''));
+        $description   = wp_kses_post($settings['description'] ?? '');
         $button_text = esc_html($settings['button_text'] ?? '');
         $heading_id  = $this->get_id() . '-heading';
 
@@ -278,7 +303,7 @@ class CupCake_Widget_Bloom_Banner extends Widget_Base {
 
             <div class="cc-bloom-banner__inner">
                 <?php if ($heading) : ?>
-                    <h2 id="<?php echo esc_attr($heading_id); ?>" class="cc-bloom-banner__heading"><?php echo $heading; ?></h2>
+                    <<?php echo esc_attr($heading_tag); ?> id="<?php echo esc_attr($heading_id); ?>" class="cc-bloom-banner__heading<?php echo $heading_style ? ' ' . esc_attr($heading_style) : ''; ?>"><?php echo $heading; ?></<?php echo esc_attr($heading_tag); ?>>
                 <?php endif; ?>
 
                 <?php if ($description) : ?>
