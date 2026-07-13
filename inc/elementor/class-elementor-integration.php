@@ -269,6 +269,17 @@ class CupCake_Elementor_Integration {
                 // Keep typography values in sync with the source of truth
                 // defined above, so later adjustments here also reach kits
                 // that were already seeded.
+                //
+                // Elementor's typography group control requires this
+                // discriminator key set to "custom" — without it, the CSS
+                // renderer treats the whole row as unset and silently
+                // skips emitting any --e-global-typography-* variables,
+                // even when every other typography_* field is populated.
+                if (($ef['typography_typography'] ?? null) !== 'custom') {
+                    $existing_fonts[$index]['typography_typography'] = 'custom';
+                    $did_change = true;
+                }
+
                 if (($ef['typography_font_family'] ?? null) !== $font['font_family']) {
                     $existing_fonts[$index]['typography_font_family'] = $font['font_family'];
                     $did_change = true;
@@ -296,6 +307,7 @@ class CupCake_Elementor_Integration {
                 $entry = [
                     '_id'                    => $font['id'],
                     'title'                  => $font['title'],
+                    'typography_typography'  => 'custom',
                     'typography_font_family' => $font['font_family'],
                     'typography_font_weight' => $font['font_weight'],
                 ];
