@@ -43,14 +43,14 @@ Elementor integration is booted lazily via `cupcake_boot_elementor_integration()
 
 `CupCake_Elementor_Integration` wires four Elementor hooks:
 
-- **Widget registration** — `elementor/widgets/register`: requires and registers all 14 widget class files
+- **Widget registration** — `elementor/widgets/register`: requires and registers all 16 widget class files
 - **Category** — `elementor/elements/categories_registered`: registers `cupcake-content` panel category
 - **Kit seeding** — on first boot, writes brand colors and fonts into the active Elementor kit's post meta (guarded by the `cupcake_kit_seeded` option; runs once)
 - **Theme locations** — `elementor/theme/register_locations`: exposes header/footer/archive/single for Elementor Theme Builder
 
 ### Custom widgets (`inc/elementor/widgets/`)
 
-All 14 widgets follow the same pattern:
+All 16 widgets follow the same pattern:
 1. Extend `\Elementor\Widget_Base`
 2. Belong to category `cupcake-content`
 3. `register_controls()` defines the Elementor panel controls

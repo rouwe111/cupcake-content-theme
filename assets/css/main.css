@@ -195,6 +195,87 @@ small     { font-size: var(--cc-text-sm); }
     padding: 0.5em 1em;
 }
 
+/* ─── CC Button widget ───────────────────────────────────────────────────────── */
+
+.cc-button {
+    --cc-button-primary-bg: #4e7d5b;
+    --cc-button-primary-bg-hover: #456f51;
+    --cc-button-primary-color: #fff;
+    --cc-button-secondary-bg: #fff;
+    --cc-button-secondary-border: #d8e9dd;
+    --cc-button-secondary-border-hover: #b7d4c1;
+    --cc-button-secondary-color: #1a1a1a;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--cc-space-2);
+    border-radius: 999px;
+    font-family: 'Poppins', var(--cc-font-body);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1;
+    padding: 16px 30px;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+        transform var(--cc-transition-fast),
+        box-shadow var(--cc-transition-fast),
+        background-color var(--cc-transition-fast),
+        border-color var(--cc-transition-fast);
+}
+
+.cc-button:focus-visible {
+    outline: 2px solid var(--cc-color-accent);
+    outline-offset: 3px;
+}
+
+.cc-button--primary {
+    background: var(--cc-button-primary-bg);
+    color: var(--cc-button-primary-color);
+    border: none;
+    box-shadow: 0 12px 22px -12px rgba(78, 125, 91, 0.85);
+}
+
+.cc-button--primary:hover,
+.cc-button--primary:focus-visible {
+    background: var(--cc-button-primary-bg-hover);
+    color: var(--cc-button-primary-color);
+    transform: translateY(-1px);
+}
+
+.cc-button--secondary {
+    background: var(--cc-button-secondary-bg);
+    color: var(--cc-button-secondary-color);
+    border: 1.5px solid var(--cc-button-secondary-border);
+}
+
+.cc-button--secondary:hover,
+.cc-button--secondary:focus-visible {
+    color: var(--cc-button-secondary-color);
+    border-color: var(--cc-button-secondary-border-hover);
+}
+
+.cc-button__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+}
+
+/* ─── CC Image widget ────────────────────────────────────────────────────────── */
+
+.cc-image__wrap {
+    overflow: hidden;
+}
+
+.cc-image__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
 /* ─── Card ───────────────────────────────────────────────────────────────────── */
 
 .cc-card {
